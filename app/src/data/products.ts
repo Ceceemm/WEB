@@ -48,7 +48,7 @@ export const products: Product[] = [
 
   // 处理设备系列
   { id: 'p9', name: '筛选机', category: 'processing', description: '原料筛选分级设备', image: '/images/products/product-09.jpg', featured: true },
-  { id: 'p10', name: '粉碎机', category: 'processing', description: '原料粉碎加工设备', image: '/images/products/product-10.jpg' },
+  { id: 'p10', name: '粉碎机', category: 'processing', description: '原料粉碎加工设备', image: '/images/products/product-18.jpg' },
   { id: 'p11', name: '炒锅', category: 'processing', description: '油料蒸炒设备，提升出油率', image: '/images/products/product-11.jpg', featured: true },
   { id: 'p12', name: '上料机', category: 'processing', description: '自动化上料输送设备', image: '/images/products/product-12.jpg' },
   { id: 'p13', name: '脱壳机', category: 'processing', description: '花生、葵花籽等脱壳处理设备', image: '/images/products/product-13.jpg' },
@@ -59,7 +59,7 @@ export const products: Product[] = [
 
   // 额外产品图片
   { id: 'p16', name: '榨油机整机', category: 'oil-press', description: '成品榨油机整机展示', image: '/images/products/product-16.jpg' },
-  { id: 'p18', name: '设备零部件', category: 'processing', description: '精密加工零部件', image: '/images/products/product-18.jpg' },
+  { id: 'p18', name: '设备零部件', category: 'processing', description: '精密加工零部件', image: '/images/products/product-10.jpg' },
   { id: 'p19', name: '设备组装', category: 'oil-press', description: '生产车间设备组装场景', image: '/images/products/product-19.jpg' },
   { id: 'p20', name: '成品设备', category: 'oil-press', description: '待发货成品设备', image: '/images/products/product-20.jpg' },
   { id: 'p21', name: '生产车间', category: 'processing', description: '生产制造车间实景', image: '/images/products/product-21.jpg' },
