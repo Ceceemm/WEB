@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" role="img" aria-labelledby="title">
+  <title id="title">增涛机械标志</title>
+  <rect width="640" height="640" fill="#f7f6f2"/>
+  <g transform="translate(74 76)">
+    <path d="M58 40h190L166 120H36z" fill="#04852d"/>
+    <path d="M292 40h238l-10 80H361L192 300h138l-12 78H18l10-78L278 40z" fill="#0657c7"/>
+    <path d="M390 120h130l-10 80h-72l-42 178h-78l42-178h-76z" fill="#0657c7"/>
+  </g>
+  <text
+    x="320"
+    y="530"
+    text-anchor="middle"
+    font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif"
+    font-size="76"
+    font-weight="800"
+    letter-spacing="6"
+    fill="#202124"
+  >增涛机械</text>
+</svg>

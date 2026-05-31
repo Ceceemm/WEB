@@ -6,11 +6,12 @@ import { AboutSection } from '@/components/sections/AboutSection';
 import { ProductsSection } from '@/components/sections/ProductsSection';
 import { GallerySection } from '@/components/sections/GallerySection';
 import { AdvantagesSection } from '@/components/sections/AdvantagesSection';
+import { ProcessSection } from '@/components/sections/ProcessSection';
 import { ContactSection } from '@/components/sections/ContactSection';
 
 function App() {
   return (
-    <div className="min-h-screen bg-forge-black text-forge-cream font-body">
+    <div className="min-h-screen bg-forge-paper text-forge-warm-text font-body">
       <Navbar />
       <main>
         <SectionErrorBoundary name="HeroSection">
@@ -21,6 +22,9 @@ function App() {
         </SectionErrorBoundary>
         <SectionErrorBoundary name="ProductsSection">
           <ProductsSection />
+        </SectionErrorBoundary>
+        <SectionErrorBoundary name="ProcessSection">
+          <ProcessSection />
         </SectionErrorBoundary>
         <SectionErrorBoundary name="GallerySection">
           <GallerySection />

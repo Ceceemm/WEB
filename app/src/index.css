@@ -8,24 +8,24 @@
 
 @layer base {
   :root {
-    /* ---- Warm Forge Aesthetic: Brighter Industrial Palette ---- */
-    --forge-black:    30 6% 12%;
-    --steel-dark:     30 4% 18%;
-    --steel-mid:      30 3% 28%;
-    --steel-light:    30 3% 40%;
-    --forge-orange:   14 78% 54%;
-    --forge-orange-glow: 14 78% 42%;
-    --molten-gold:    42 54% 54%;
-    --slag-gray:      30 6% 50%;
-    --cream:          38 28% 94%;
-    --warm-white:     38 20% 98%;
+    /* ---- Daylight factory catalog palette ---- */
+    --forge-black:    36 13% 8%;
+    --steel-dark:     38 12% 16%;
+    --steel-mid:      34 8% 33%;
+    --steel-light:    34 8% 54%;
+    --forge-orange:   18 76% 48%;
+    --forge-orange-glow: 18 70% 38%;
+    --molten-gold:    43 56% 48%;
+    --slag-gray:      32 7% 46%;
+    --cream:          42 31% 92%;
+    --warm-white:     40 24% 97%;
 
     /* ---- Light section tokens (alternating rhythm) ---- */
-    --warm-paper:     36 14% 95%;
-    --warm-surface:   36 10% 99%;
-    --warm-border:    30 8% 84%;
-    --warm-text:      30 10% 14%;
-    --warm-muted:     30 5% 42%;
+    --warm-paper:     42 25% 92%;
+    --warm-surface:   38 26% 97%;
+    --warm-border:    34 14% 78%;
+    --warm-text:      36 15% 11%;
+    --warm-muted:     34 8% 38%;
 
     /* ---- Map to shadcn/ui tokens ---- */
     --background: var(--forge-black);
@@ -47,7 +47,7 @@
     --border: var(--steel-light);
     --input: var(--steel-mid);
     --ring: var(--forge-orange);
-    --radius: 0.25rem;
+    --radius: 0.375rem;
     --sidebar-background: var(--steel-dark);
     --sidebar-foreground: var(--cream);
     --sidebar-primary: var(--forge-orange);
@@ -69,6 +69,7 @@
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-body);
     position: relative;
+    scroll-behavior: smooth;
   }
 
   body::before {
@@ -77,7 +78,7 @@
     inset: 0;
     z-index: 9999;
     pointer-events: none;
-    opacity: 0.025;
+    opacity: 0.04;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     background-repeat: repeat;
     background-size: 256px 256px;
@@ -105,7 +106,23 @@
   .stagger-6 { animation-delay: 500ms; }
 
   .text-glow-forge {
-    text-shadow: 0 0 40px rgba(224, 90, 61, 0.3), 0 0 80px rgba(224, 90, 61, 0.15);
+    text-shadow: 0 0 34px rgba(190, 79, 38, 0.24), 0 0 70px rgba(190, 79, 38, 0.12);
+  }
+
+  .factory-grid {
+    background-image:
+      linear-gradient(hsl(var(--warm-text) / 0.055) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--warm-text) / 0.055) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  .spec-rule {
+    background-image: repeating-linear-gradient(
+      90deg,
+      hsl(var(--warm-text) / 0.22) 0 12px,
+      transparent 12px 22px
+    );
+    height: 1px;
   }
 }
 
@@ -155,6 +172,6 @@
 
 /* ---- Selection ---- */
 ::selection {
-  background: hsl(var(--forge-orange) / 0.4);
-  color: hsl(var(--warm-white));
+  background: hsl(var(--forge-orange) / 0.24);
+  color: hsl(var(--warm-text));
 }

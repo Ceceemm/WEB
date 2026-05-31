@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ScrollReveal } from '@/components/common/ScrollReveal';
 import { WebpImage } from '@/components/common/WebpImage';
 import { productCategories, products, type Product, type ProductCategory } from '@/data/products';
+import { ArrowUpRight } from 'lucide-react';
 
 export function ProductsSection() {
   const [activeCategory, setActiveCategory] = useState<ProductCategory['key']>('oil-press');
@@ -11,18 +12,28 @@ export function ProductsSection() {
   const categoryProducts = products.filter((p) => p.category === activeCategory);
 
   return (
-    <section id="products" className="relative py-32 md:py-48 overflow-hidden bg-forge-black">
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
-        <ScrollReveal>
-          <h2 className="font-display font-bold text-3xl md:text-4xl lg:text-5xl text-forge-cream mb-12">
-            产品系列
-          </h2>
-        </ScrollReveal>
+    <section id="products" className="relative overflow-hidden bg-forge-paper py-24 md:py-32">
+      <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">
+        <div className="mb-12 grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+          <ScrollReveal>
+            <div>
+              <p className="text-sm font-semibold text-forge-orange">产品系列</p>
+              <h2 className="mt-4 font-display text-4xl md:text-6xl font-black leading-tight text-forge-warm-text">
+                按现场工序选设备
+              </h2>
+            </div>
+          </ScrollReveal>
+          <ScrollReveal delay={100}>
+            <p className="max-w-2xl text-base md:text-lg leading-8 text-forge-warm-muted">
+              从压榨、筛选、粉碎、炒制到煤炭装袋和装车，产品以真实设备照片为主，便于快速判断型号与使用场景。
+            </p>
+          </ScrollReveal>
+        </div>
 
         {/* Category Tabs */}
         <ScrollReveal delay={100}>
           <div
-            className="flex gap-2 mb-16 border-b border-forge-light/20 overflow-x-auto pb-1"
+            className="mb-10 grid gap-2 border-y border-forge-warm-border py-2 sm:grid-cols-3"
             role="tablist"
             aria-label="产品分类"
           >
@@ -32,19 +43,20 @@ export function ProductsSection() {
                 id={`product-tab-${cat.key}`}
                 type="button"
                 role="tab"
+                aria-label={cat.label}
                 aria-selected={activeCategory === cat.key}
                 aria-controls={`product-panel-${cat.key}`}
                 onClick={() => setActiveCategory(cat.key)}
-                className={`relative px-6 py-3 font-body font-medium text-sm whitespace-nowrap transition-all ${
+                className={`relative px-5 py-4 text-left text-sm font-semibold transition-all ${
                   activeCategory === cat.key
-                    ? 'text-forge-cream'
-                    : 'text-forge-gray hover:text-forge-cream/70'
+                    ? 'bg-forge-warm-text text-forge-paper'
+                    : 'bg-forge-surface text-forge-warm-muted hover:text-forge-warm-text'
                 }`}
               >
-                {cat.label}
-                {activeCategory === cat.key && (
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-forge-orange animate-forge-glow" />
-                )}
+                <span className="block text-base">{cat.label}</span>
+                <span className={`mt-2 block text-xs leading-5 ${activeCategory === cat.key ? 'text-forge-cream/75' : 'text-forge-warm-muted'}`}>
+                  {cat.description}
+                </span>
               </button>
             ))}
           </div>
@@ -52,7 +64,7 @@ export function ProductsSection() {
 
         {/* Category Description */}
         <ScrollReveal delay={150}>
-          <p className="text-forge-gray text-sm font-mono tracking-wider mb-12">
+          <p className="mb-8 text-sm font-semibold text-forge-orange">
             {currentCategory.description}
           </p>
         </ScrollReveal>
@@ -60,10 +72,10 @@ export function ProductsSection() {
         {/* Product Grid */}
         <div
           id={`product-panel-${activeCategory}`}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-px bg-forge-warm-border border border-forge-warm-border"
           role="tabpanel"
           aria-labelledby={`product-tab-${activeCategory}`}
-          aria-label={`${currentCategory.label}产品列表`}
+          aria-label={currentCategory.label}
         >
           {categoryProducts.map((product, index) => (
             <ScrollReveal key={product.id} delay={index * 80}>
@@ -80,18 +92,18 @@ function ProductCard({ product }: { product: Product }) {
   const [imgError, setImgError] = useState(false);
 
   return (
-    <div className="group relative bg-forge-dark border border-forge-light/30 rounded-sm overflow-hidden transition-all duration-500 hover:border-forge-orange/60 hover:shadow-forge">
+    <article className="group relative bg-forge-surface overflow-hidden transition-colors duration-300 hover:bg-forge-paper">
       {/* Image container */}
-      <div className="aspect-[4/3] bg-forge-mid overflow-hidden">
+      <div className="aspect-[4/3] bg-forge-warm-border/40 overflow-hidden">
         {imgError ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-forge-gray/30 font-display text-sm">{product.name}</p>
+            <p className="text-forge-warm-muted/60 font-display text-sm">{product.name}</p>
           </div>
         ) : (
           <WebpImage
             src={product.image}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             style={{ willChange: 'transform' }}
             onError={() => setImgError(true)}
           />
@@ -99,17 +111,19 @@ function ProductCard({ product }: { product: Product }) {
       </div>
 
       {/* Info */}
-      <div className="p-5">
-        <h3 className="font-display font-bold text-lg text-forge-cream group-hover:text-forge-orange transition-colors">
-          {product.name}
-        </h3>
-        <p className="mt-2 text-forge-gray text-sm font-body leading-relaxed">
+      <div className="min-h-[154px] p-5">
+        <div className="flex items-start justify-between gap-4">
+          <h3 className="font-display font-black text-xl text-forge-warm-text group-hover:text-forge-orange transition-colors">
+            {product.name}
+          </h3>
+          <ArrowUpRight size={18} className="mt-1 shrink-0 text-forge-warm-muted group-hover:text-forge-orange" aria-hidden="true" />
+        </div>
+        <p className="mt-3 text-forge-warm-muted text-sm leading-7">
           {product.description}
         </p>
       </div>
 
-      {/* Heat line on hover */}
-      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-forge-orange/0 to-transparent group-hover:via-forge-orange/70 transition-all duration-500" />
-    </div>
+      <div className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-forge-orange transition-transform duration-300 group-hover:scale-x-100" />
+    </article>
   );
 }

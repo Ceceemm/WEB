@@ -14,29 +14,34 @@ export function GallerySection() {
   const displayProducts = [...featured, ...rest];
 
   return (
-    <section id="gallery" className="relative py-32 md:py-48 overflow-hidden bg-forge-paper">
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
-        <ScrollReveal>
-          <h2 className="font-display font-bold text-3xl md:text-4xl lg:text-5xl text-forge-warm-text mb-12">
-            设备实拍
-          </h2>
-        </ScrollReveal>
+    <section id="gallery" className="relative py-24 md:py-32 overflow-hidden bg-forge-surface">
+      <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">
+        <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <ScrollReveal>
+            <div>
+              <p className="text-sm font-semibold text-forge-orange">设备实拍</p>
+              <h2 className="mt-4 font-display font-black text-4xl md:text-6xl text-forge-warm-text">
+                真实机器，比渲染图更有用
+              </h2>
+            </div>
+          </ScrollReveal>
 
-        <ScrollReveal delay={100}>
-          <p className="text-forge-warm-muted font-mono text-sm tracking-wider mb-16">
-            点击图片查看大图
-          </p>
-        </ScrollReveal>
+          <ScrollReveal delay={100}>
+            <p className="max-w-sm text-sm leading-7 text-forge-warm-muted">
+              点击图片查看大图，重点观察结构、比例、出料口、输送位置和现场占地。
+            </p>
+          </ScrollReveal>
+        </div>
 
         {/* Masonry Grid */}
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-3 space-y-3">
           {displayProducts.map((product, index) => {
             const isFeatured = product.featured && index === 0;
             return (
               <ScrollReveal key={product.id} delay={index * 60}>
                 <button
                   type="button"
-                  className="break-inside-avoid group relative block w-full cursor-pointer overflow-hidden rounded-sm border border-forge-warm-border/50 text-left transition-all duration-500 hover:border-forge-orange/60 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forge-orange focus-visible:ring-offset-2 focus-visible:ring-offset-forge-paper"
+                  className="break-inside-avoid group relative block w-full cursor-pointer overflow-hidden border border-forge-warm-border bg-forge-paper text-left transition-all duration-500 hover:border-forge-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forge-orange focus-visible:ring-offset-2 focus-visible:ring-offset-forge-surface"
                   onClick={() =>
                     setLightbox({ src: product.image, alt: product.name })
                   }
@@ -54,22 +59,19 @@ export function GallerySection() {
                       className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       style={{ willChange: 'transform' }}
                     />
-                    {/* Warm overlay - lifts on hover */}
-                    <div className="absolute inset-0 bg-forge-warm-text/15 group-hover:bg-forge-warm-text/5 transition-all duration-500" />
-                    {/* Forge glow on hover */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-forge-inner" />
+                    <div className="absolute inset-0 bg-forge-warm-text/10 group-hover:bg-transparent transition-all duration-500" />
                   </div>
 
                   {/* Label */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-forge-warm-text/70 to-transparent">
-                    <p className="text-forge-surface font-display font-bold text-sm group-hover:text-forge-orange transition-colors">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-forge-warm-text/82">
+                    <p className="text-forge-paper font-display font-bold text-sm group-hover:text-forge-orange transition-colors">
                       {product.name}
                     </p>
                   </div>
 
                   {/* Magnifier icon on hover */}
-                  <div className="absolute top-3 right-3 w-8 h-8 bg-forge-warm-text/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-all duration-300 border border-forge-warm-border">
-                    <Search size={14} className="text-forge-surface" aria-hidden="true" />
+                  <div className="absolute top-3 right-3 w-9 h-9 bg-forge-paper flex items-center justify-center opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-all duration-300 border border-forge-warm-border">
+                    <Search size={15} className="text-forge-warm-text" aria-hidden="true" />
                   </div>
                 </button>
               </ScrollReveal>

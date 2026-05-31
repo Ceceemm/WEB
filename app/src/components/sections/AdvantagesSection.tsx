@@ -27,35 +27,39 @@ const advantages = [
 
 export function AdvantagesSection() {
   return (
-    <section className="relative pt-32 md:pt-48 pb-6 md:pb-8 overflow-hidden bg-forge-black">
-      <SectionNumber number="03" className="-top-8 -left-8" />
+    <section className="relative overflow-hidden bg-forge-paper py-24 md:py-32">
+      <SectionNumber number="05" className="-top-8 -left-8 text-forge-warm-text/5" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
-        <ScrollReveal>
-          <h2 className="font-display font-bold text-3xl md:text-4xl lg:text-5xl text-forge-cream mb-16">
-            为什么选择我们
-          </h2>
-        </ScrollReveal>
+      <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">
+        <div className="mb-12 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+          <ScrollReveal>
+            <h2 className="font-display font-black text-4xl md:text-6xl text-forge-warm-text">
+              为什么选择我们
+            </h2>
+          </ScrollReveal>
+          <ScrollReveal delay={100}>
+            <p className="max-w-2xl text-forge-warm-muted leading-8">
+              采购机械设备更看重稳定、匹配和后续沟通。优势不做空泛口号，直接对应客户会问的四件事。
+            </p>
+          </ScrollReveal>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-px border border-forge-warm-border bg-forge-warm-border sm:grid-cols-2 lg:grid-cols-4">
           {advantages.map((item, index) => (
             <ScrollReveal key={item.title} delay={index * 100}>
-              <div className="group relative bg-forge-dark border border-forge-light/20 p-8 rounded-sm transition-all duration-500 hover:border-forge-orange/30">
-                {/* Heat line on top edge */}
-                <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-forge-orange/0 to-transparent group-hover:via-forge-orange/60 transition-all duration-500" />
-
-                <div className="flex items-start gap-5">
-                  <div className="flex-shrink-0 w-12 h-12 bg-forge-mid rounded-sm flex items-center justify-center group-hover:bg-forge-orange/20 transition-colors">
+              <div className="group relative min-h-[250px] bg-forge-surface p-7 transition-colors duration-300 hover:bg-forge-warm-text">
+                <div className="flex h-full flex-col justify-between gap-10">
+                  <div className="flex h-12 w-12 items-center justify-center border border-forge-warm-border group-hover:border-forge-orange">
                     <item.icon
                       size={22}
-                      className="text-forge-gray group-hover:text-forge-orange transition-colors"
+                      className="text-forge-orange transition-colors"
                     />
                   </div>
                   <div>
-                    <h3 className="font-display font-bold text-lg text-forge-cream mb-2">
+                    <h3 className="font-display font-black text-xl text-forge-warm-text mb-3 group-hover:text-forge-paper">
                       {item.title}
                     </h3>
-                    <p className="text-forge-gray text-sm leading-relaxed font-body">
+                    <p className="text-forge-warm-muted text-sm leading-7 group-hover:text-forge-cream/75">
                       {item.description}
                     </p>
                   </div>
