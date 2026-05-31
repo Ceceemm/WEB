@@ -25,8 +25,11 @@ describe('products data', () => {
     }
   });
 
-  it('removes the loader product from public product data', () => {
-    expect(products.some((product) => product.id === 'p15')).toBe(false);
-    expect(products.some((product) => product.name === '装车机')).toBe(false);
+  it('keeps items that are hidden from product series available for gallery use', () => {
+    const galleryOnlyIds = ['p15', 'p19', 'p20', 'p21', 'p22', 'p25', 'p26'];
+
+    for (const id of galleryOnlyIds) {
+      expect(products.some((product) => product.id === id)).toBe(true);
+    }
   });
 });

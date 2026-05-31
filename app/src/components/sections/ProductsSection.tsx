@@ -4,12 +4,16 @@ import { WebpImage } from '@/components/common/WebpImage';
 import { productCategories, products, type Product, type ProductCategory } from '@/data/products';
 import { ArrowUpRight } from 'lucide-react';
 
+const hiddenProductSeriesIds = new Set(['p15', 'p19', 'p20', 'p21', 'p22', 'p25', 'p26']);
+
 export function ProductsSection() {
   const [activeCategory, setActiveCategory] = useState<ProductCategory['key']>('oil-press');
 
   const currentCategory =
     productCategories.find((c) => c.key === activeCategory) ?? productCategories[0];
-  const categoryProducts = products.filter((p) => p.category === activeCategory);
+  const categoryProducts = products.filter(
+    (p) => p.category === activeCategory && !hiddenProductSeriesIds.has(p.id),
+  );
 
   return (
     <section id="products" className="relative overflow-hidden bg-forge-paper py-24 md:py-32">

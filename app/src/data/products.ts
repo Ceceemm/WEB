@@ -56,6 +56,7 @@ export const products: Product[] = [
 
   // 装袋设备系列
   { id: 'p14', name: '煤炭装袋机', category: 'bagging', description: '煤炭定量装袋设备', image: '/images/products/product-15.jpg', featured: true },
+  { id: 'p15', name: '装车机', category: 'bagging', description: '物料装车输送设备', image: '/images/products/product-15.jpg', featured: true },
 
   // 额外产品图片
   { id: 'p16', name: '榨油机整机', category: 'oil-press', description: '成品榨油机整机展示', image: '/images/products/product-16-whole-press-new.jpg', hasWebp: false },
