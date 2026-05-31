@@ -35,7 +35,7 @@ export default defineConfig({
           if (/\.(woff2?|ttf|eot)$/.test(assetInfo.name ?? "")) {
             return "fonts/[name]-[hash][extname]";
           }
-          return "assets/[name]-[hash][extname]";
+          return "assets/[hash][extname]";
         },
       },
     },

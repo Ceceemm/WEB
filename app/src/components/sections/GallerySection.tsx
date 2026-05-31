@@ -64,7 +64,7 @@ export function GallerySection() {
 
                   {/* Label */}
                   <div className="absolute bottom-0 left-0 right-0 p-4 bg-forge-warm-text/82">
-                    <p className="text-forge-paper font-display font-bold text-sm group-hover:text-forge-orange transition-colors">
+                    <p className="text-forge-paper font-display font-bold text-sm text-stroke-forge group-hover:text-forge-orange transition-colors">
                       {product.name}
                     </p>
                   </div>
