@@ -72,6 +72,11 @@ npm run preview
 - `npm run build` 先执行 TypeScript 构建检查，再执行 Vite 构建。
 - `npm run check` 依次执行 lint、测试、构建，适合作为最终验证。
 
+## Git 工作流
+
+- 每次完成项目修改后，应执行 `git commit` 并 `git push` 到 GitHub。
+- 提交信息要清楚说明本次修改内容，便于在 VSCode 和 GitHub 中查看每次代码修改细节和回滚。
+
 ## 代码与架构约定
 
 - 使用 `@/*` 路径别名指向 `app/src/*`。
