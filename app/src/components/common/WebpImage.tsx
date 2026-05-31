@@ -6,12 +6,13 @@ interface WebpImageProps {
   loading?: 'eager' | 'lazy';
   decoding?: 'async' | 'auto' | 'sync';
   fetchPriority?: 'high' | 'low' | 'auto';
+  useWebp?: boolean;
   onError?: (e: React.SyntheticEvent<HTMLImageElement>) => void;
 }
 
 /**
  * Renders a <picture> element with WebP source + original format fallback.
- * Assumes .webp version exists alongside the original (same path, .webp extension).
+ * Uses .webp when a matching sibling file is available.
  */
 export function WebpImage({
   src,
@@ -21,13 +22,14 @@ export function WebpImage({
   loading = 'lazy',
   decoding = 'async',
   fetchPriority,
+  useWebp = true,
   onError,
 }: WebpImageProps) {
   const webpSrc = src.replace(/\.(jpe?g|png)$/i, '.webp');
 
   return (
     <picture className="block h-full w-full">
-      <source srcSet={webpSrc} type="image/webp" />
+      {useWebp && <source srcSet={webpSrc} type="image/webp" />}
       <img
         src={src}
         alt={alt}

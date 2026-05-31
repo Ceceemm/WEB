@@ -58,6 +58,7 @@ export function GallerySection() {
                       alt={product.name}
                       className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       style={{ willChange: 'transform' }}
+                      useWebp={product.hasWebp !== false}
                     />
                     <div className="absolute inset-0 bg-forge-warm-text/10 group-hover:bg-transparent transition-all duration-500" />
                   </div>

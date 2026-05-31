@@ -24,4 +24,9 @@ describe('products data', () => {
       expect(product.image).toMatch(/^\/images\/products\/.+\.jpg$/);
     }
   });
+
+  it('removes the loader product from public product data', () => {
+    expect(products.some((product) => product.id === 'p15')).toBe(false);
+    expect(products.some((product) => product.name === '装车机')).toBe(false);
+  });
 });

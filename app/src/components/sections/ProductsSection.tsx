@@ -25,7 +25,7 @@ export function ProductsSection() {
           </ScrollReveal>
           <ScrollReveal delay={100}>
             <p className="max-w-2xl text-base md:text-lg leading-8 text-forge-warm-muted">
-              从压榨、筛选、粉碎、炒制到煤炭装袋和装车，产品以真实设备照片为主，便于快速判断型号与使用场景。
+              从压榨、筛选、粉碎、炒制到煤炭装袋，产品以真实设备照片为主，便于快速判断型号与使用场景。
             </p>
           </ScrollReveal>
         </div>
@@ -105,6 +105,7 @@ function ProductCard({ product }: { product: Product }) {
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             style={{ willChange: 'transform' }}
+            useWebp={product.hasWebp !== false}
             onError={() => setImgError(true)}
           />
         )}
