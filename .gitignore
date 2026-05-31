@@ -1,0 +1,29 @@
+# Dependencies
+app/node_modules/
+
+# Build output
+app/dist/
+
+# Logs
+app/*.log
+*.log
+
+# Local environment files
+.env
+.env.*
+!.env.example
+!.env.*.example
+app/.env
+app/.env.*
+!app/.env.example
+!app/.env.*.example
+
+# Local tool state
+.workbuddy/
+.codebuddy/settings.local.json
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
