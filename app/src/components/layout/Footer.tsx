@@ -8,6 +8,14 @@ export function Footer() {
         <p className="text-forge-warm-muted text-sm">
           &copy; {FOUNDING_YEAR}-{currentYear} 安丘市增涛机械有限公司
         </p>
+        <a
+          className="text-forge-warm-muted text-sm hover:text-forge-orange transition-colors"
+          href="https://beian.miit.gov.cn/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          鲁ICP备2026031639号
+        </a>
         <p className="text-forge-warm-text text-sm font-semibold tracking-wider">
           山东潍坊制造 · 油脂加工与装袋设备
         </p>
