@@ -22,6 +22,9 @@ app/.env.*
 .workbuddy/
 .codebuddy/settings.local.json
 
+# Local filing/domain evidence files at repo root
+/*.jpg
+
 # Editor and OS files
 .DS_Store
 Thumbs.db
