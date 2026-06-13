@@ -52,13 +52,22 @@ export function HeroSection() {
                   查看产品
                   <ArrowDown size={17} aria-hidden="true" />
                 </a>
-                <a
-                  href="tel:13606464864"
-                  className="inline-flex h-12 items-center gap-2 border border-forge-warm-text px-6 text-sm font-semibold text-forge-warm-text transition-colors hover:border-forge-orange hover:text-forge-orange"
-                >
-                  <Phone size={17} aria-hidden="true" />
-                  电话咨询
-                </a>
+                <div className="flex flex-col gap-2">
+                  <a
+                    href="tel:13606464864"
+                    className="inline-flex h-12 items-center justify-center gap-2 border border-forge-warm-text px-6 text-sm font-semibold text-forge-warm-text transition-colors hover:border-forge-orange hover:text-forge-orange"
+                  >
+                    <Phone size={17} aria-hidden="true" />
+                    电话咨询
+                  </a>
+                  <a
+                    href="tel:13606464864"
+                    aria-label="拨打咨询电话 13606464864"
+                    className="inline-flex min-h-8 items-center justify-center border border-forge-warm-border bg-forge-surface px-3 font-mono text-sm font-bold tracking-[0.08em] text-forge-warm-text transition-colors hover:border-forge-orange hover:text-forge-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forge-orange focus-visible:ring-offset-2 focus-visible:ring-offset-forge-paper"
+                  >
+                    13606464864
+                  </a>
+                </div>
               </div>
             </div>
 
