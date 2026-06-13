@@ -1,5 +1,6 @@
 const FOUNDING_YEAR = 2012;
 const currentYear = new Date().getFullYear();
+const ICP_FILING_URL = 'https://beian.miit.gov.cn/#/Integrated/index';
 
 export function Footer() {
   return (
@@ -10,9 +11,9 @@ export function Footer() {
         </p>
         <a
           className="text-forge-warm-muted text-sm hover:text-forge-orange transition-colors"
-          href="https://beian.miit.gov.cn/"
+          href={ICP_FILING_URL}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
         >
           鲁ICP备2026031639号
         </a>

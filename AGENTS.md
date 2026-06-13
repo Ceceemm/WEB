@@ -141,7 +141,7 @@ npm run preview
 
 ## 备案与上线维护
 
-- ICP 备案号当前为 `鲁ICP备2026031639号`，展示位置在 `app/src/components/layout/Footer.tsx`，链接应指向 `https://beian.miit.gov.cn/`。
+- ICP 备案号当前为 `鲁ICP备2026031639号`，展示位置在 `app/src/components/layout/Footer.tsx`，链接应指向 `https://beian.miit.gov.cn/#/Integrated/index`。
 - 官网域名当前为 `aqztjx.top`，正式访问方式为阿里云 OSS 直连：`http://aqztjx.top/` 和 `http://www.aqztjx.top/`。
 - 阿里云 OSS Bucket 为 `aqztjx-site`，区域为华北2（北京）`oss-cn-beijing`；静态网站托管默认首页和默认 404 页均为 `index.html`，错误文档响应码为 `200`。
 - 当前暂不开通 CDN，HTTPS 也暂未配置；不要把 `app/index.html` 的 canonical、Open Graph URL 和结构化数据 URL 改成 `https://`，除非 HTTPS 已在阿里云侧验证可用。
