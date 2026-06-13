@@ -16,7 +16,10 @@ export function ProductsSection() {
   );
 
   return (
-    <section id="products" className="relative overflow-hidden bg-forge-paper py-24 md:py-32">
+    <section
+      id="products"
+      className="relative overflow-hidden bg-forge-paper py-24 [overflow-anchor:none] md:py-32"
+    >
       <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">
         <div className="mb-12 grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
           <ScrollReveal>
