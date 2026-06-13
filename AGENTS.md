@@ -64,6 +64,7 @@ npm run lint
 npm run test:run
 npm run check
 npm run preview
+npm run preview:static -- 5175
 ```
 
 说明：
@@ -71,6 +72,9 @@ npm run preview
 - `npm run dev` 启动 Vite 开发服务。
 - `npm run build` 先执行 TypeScript 构建检查，再执行 Vite 构建。
 - `npm run check` 依次执行 lint、测试、构建，适合作为最终验证。
+- `npm run preview:static -- 端口号` 使用 `app/dist` 启动轻量静态预览，适合 Codex 内置浏览器打不开 Vite 后台服务时使用。
+- 本机 PowerShell 中不要直接依赖 `npm`，优先显式调用 `D:\soft\npm.cmd`，避免命中 `npm.ps1` 执行策略限制。
+- 如果 Codex 内置浏览器提示 `127.0.0.1` 拒绝连接，先用 `Invoke-WebRequest http://127.0.0.1:<端口>/` 验证端口是否真返回 `200`；若 Vite 或 `npm` 后台服务假活或退出，先执行 `D:\soft\npm.cmd run build`，再用 `D:\soft\node.exe scripts/static-preview.mjs <当前浏览器端口>` 直接接管该端口。通过 Codex 启动长期预览服务时，需要批准沙箱外 `Start-Process`，普通沙箱子进程可能在命令结束后被回收。
 
 ## Git 工作流
 

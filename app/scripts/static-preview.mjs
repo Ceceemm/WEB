@@ -3,7 +3,7 @@ import { createServer } from 'node:http';
 import { extname, join, normalize } from 'node:path';
 
 const root = new URL('../dist/', import.meta.url).pathname.replace(/^\/([A-Z]:)/, '$1');
-const port = 5173;
+const port = Number(process.env.PORT ?? process.argv[2] ?? 4173);
 
 const types = {
   '.css': 'text/css; charset=utf-8',
