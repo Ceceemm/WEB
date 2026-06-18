@@ -32,11 +32,14 @@
 WEB/
 ├── app/
 │   ├── public/images/products/   # 产品图片
+│   ├── scripts/                  # 静态预渲染、预览和 OSS 上传脚本
 │   ├── src/
 │   │   ├── components/           # 页面组件和通用组件
-│   │   ├── data/                 # 产品数据
+│   │   ├── data/                 # 产品、站点、页面和结构化数据
 │   │   ├── hooks/                # 自定义 Hook
+│   │   ├── pages/                # 首页和静态多页内容
 │   │   ├── App.tsx               # 页面总装
+│   │   ├── entry-server.tsx      # 服务端预渲染入口
 │   │   └── main.tsx              # React 入口
 │   ├── package.json
 │   └── vite.config.ts
@@ -87,6 +90,21 @@ npm run check     # lint + test + build
 npm run preview   # 预览构建结果
 ```
 
+生产构建会先完成 Vite 客户端构建，再构建 SSR 入口并预渲染静态多页 HTML。
+
+当前静态页面包括：
+
+- `http://aqztjx.top/`
+- `http://aqztjx.top/gongsi/index.html`
+- `http://aqztjx.top/chanpin/index.html`
+- `http://aqztjx.top/chanpin/zhayou-shebei/index.html`
+- `http://aqztjx.top/chanpin/chuli-shebei/index.html`
+- `http://aqztjx.top/chanpin/zhuangdai-shebei/index.html`
+- `http://aqztjx.top/lianxi/index.html`
+- `http://aqztjx.top/wenti/index.html`
+
+说明：当前 OSS 静态网站规则会把 `/wenti/`、`/chanpin/` 这类目录 URL 回落到首页，因此正式 canonical、站内链接和 sitemap 使用 `.../index.html` 形式，保证搜索引擎和 AI 抓取时拿到独立页面正文。
+
 ## 联系方式
 
 - 电话：`13606464864`
@@ -108,6 +126,13 @@ ICP备案已通过，当前网站底部展示的备案号为 `鲁ICP备202603163
 - 当前暂不开通 CDN，HTTPS 也暂未配置；对外不要使用 `https://` 链接。
 - 当前项目为纯静态官网，不需要 ECS、数据库或后端服务器。
 
+发布方式：
+
+- 先运行 `D:\soft\npm.cmd run build`。
+- 再运行 `D:\soft\node.exe scripts\deploy-oss.mjs` 上传 `app/dist` 到 `aqztjx-site`。
+- 上传脚本读取 `C:\Users\TomatoLaser\.ossutilconfig`，只执行 `PutObject` 覆盖/新增对象，不执行删除。
+- `assets/` 下资源使用长期缓存，其余 HTML、sitemap、robots 使用 `no-cache`。
+
 本机 OSS 发布凭据备忘：
 
 - 2026-06-18 已在阿里云 RAM 快速开始中创建程序用户 `aqztjx-site-deploy`。
@@ -116,6 +141,12 @@ ICP备案已通过，当前网站底部展示的备案号为 `鲁ICP备202603163
 - 本机已把凭据写入当前 Windows 用户环境变量，并创建 `C:\Users\TomatoLaser\.ossutilconfig`。
 - 当前 PATH 未检测到 `ossutil` 或 `ossutil64`；安装 ossutil 后，新开 PowerShell 再执行 `ossutil ls oss://aqztjx-site` 验证。
 - AccessKey ID、AccessKey Secret、下载的凭据文件不得写入仓库、文档、测试或提交信息。
+
+百度搜索资源状态：
+
+- 2026-06-18 已上线 `sitemap.xml` 与 `robots.txt`。
+- 2026-06-18 已通过百度普通收录 API 成功提交 8 条正式 URL：首页、公司介绍、产品分类、三类设备详情、联系方式、常见问题。
+- 百度推送接口 token 不得写入仓库、文档、测试或提交信息；需要推送时由操作者临时提供。
 
 正式上线前后按以下顺序核对：
 

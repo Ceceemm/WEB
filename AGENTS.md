@@ -30,12 +30,19 @@ Remove-Item "C:\path\to\file.txt"
 关键路径：
 
 - `app/package.json`：脚本、依赖、项目命令。
-- `app/src/App.tsx`：页面总装，按顺序渲染 Navbar、Hero、About、Products、Gallery、Advantages、Contact、Footer。
+- `app/src/App.tsx`：页面总装，根据当前路径渲染首页或静态多页，并统一挂载 Navbar、Footer。
 - `app/src/main.tsx`：React 入口，已检查 `#root` 是否存在。
+- `app/src/entry-server.tsx`：React 服务端预渲染入口，用于构建多页静态 HTML。
 - `app/src/index.css`：全局样式、CSS 变量、锻造风格基础样式。
 - `app/tailwind.config.js`：Tailwind 主题扩展、forge 色板、字体、动画。
 - `app/vite.config.ts`：Vite、Vitest、gzip 压缩、构建分包和资源输出规则。
 - `app/src/data/products.ts`：产品分类和产品列表数据。
+- `app/src/data/site.ts`：公司名、电话、微信、地址、服务地区、FAQ 等站点统一信息。
+- `app/src/data/pages.ts`：静态页面路由、metadata、产品分类详情文案。
+- `app/src/data/structured-data.ts`：WebSite、LocalBusiness、BreadcrumbList、Product、FAQPage 等 JSON-LD 和 sitemap 生成逻辑。
+- `app/src/pages/`：首页和新增静态多页内容。
+- `app/scripts/prerender.mjs`：生产构建后生成 `dist/**/index.html`。
+- `app/scripts/deploy-oss.mjs`：读取本机 `.ossutilconfig` 并上传 `app/dist` 到阿里云 OSS，不执行删除。
 - `app/public/images/products/`：产品图片，基本同时提供 `.jpg` 与 `.webp`。
 - `app/src/components/sections/`：页面各业务区块。
 - `app/src/components/common/`：通用组件，如滚动出现、WebP 图片、灯箱、错误边界。
@@ -70,9 +77,10 @@ npm run preview:static -- 5175
 说明：
 
 - `npm run dev` 启动 Vite 开发服务。
-- `npm run build` 先执行 TypeScript 构建检查，再执行 Vite 构建。
+- `npm run build` 先执行 TypeScript 构建检查，再执行 Vite 客户端构建、SSR 入口构建和静态多页预渲染。
 - `npm run check` 依次执行 lint、测试、构建，适合作为最终验证。
 - `npm run preview:static -- 端口号` 使用 `app/dist` 启动轻量静态预览，适合 Codex 内置浏览器打不开 Vite 后台服务时使用。
+- `D:\soft\node.exe scripts\deploy-oss.mjs` 上传 `app/dist` 到阿里云 OSS；该脚本只执行 PutObject 覆盖/新增，不删除 OSS 对象。
 - 本机 PowerShell 中不要直接依赖 `npm`，优先显式调用 `D:\soft\npm.cmd`，避免命中 `npm.ps1` 执行策略限制。
 - 如果 Codex 内置浏览器提示 `127.0.0.1` 拒绝连接，先用 `Invoke-WebRequest http://127.0.0.1:<端口>/` 验证端口是否真返回 `200`；若 Vite 或 `npm` 后台服务假活或退出，先执行 `D:\soft\npm.cmd run build`，再用 `D:\soft\node.exe scripts/static-preview.mjs <当前浏览器端口>` 直接接管该端口。通过 Codex 启动长期预览服务时，需要批准沙箱外 `Start-Process`，普通沙箱子进程可能在命令结束后被回收。
 
@@ -95,7 +103,20 @@ npm run preview:static -- 5175
 
 ## 页面和内容结构
 
-当前首页为单页落地页，锚点导航包括：
+当前站点为静态多页官网，首页保留落地页体验，并新增独立抓取页面：
+
+- `/`：首页。
+- `/gongsi/index.html`：公司介绍。
+- `/chanpin/index.html`：产品分类。
+- `/chanpin/zhayou-shebei/index.html`：榨油设备详情。
+- `/chanpin/chuli-shebei/index.html`：处理设备详情。
+- `/chanpin/zhuangdai-shebei/index.html`：装袋设备详情。
+- `/lianxi/index.html`：联系方式。
+- `/wenti/index.html`：常见问题。
+
+当前 OSS 静态网站规则会把 `/wenti/`、`/chanpin/` 这类目录 URL 回落到首页，因此正式 canonical、站内链接和 sitemap 使用 `.../index.html` 形式，保证搜索引擎和 AI 抓取时拿到独立页面正文。
+
+首页锚点区块包括：
 
 - `#hero`：首屏，突出“安丘增涛机械”。
 - `#about`：公司介绍、注册资本、成立年限。
@@ -133,7 +154,17 @@ npm run preview:static -- 5175
 
 ## SEO 与静态信息
 
-`app/index.html` 已包含：
+SEO 信息由 `app/src/data/pages.ts`、`app/src/data/site.ts`、`app/src/data/structured-data.ts` 和预渲染构建统一生成。
+
+全站结构化数据包含：
+
+- 基础 `WebSite`、`LocalBusiness`。
+- 各页 `BreadcrumbList`。
+- 产品页 `CollectionPage`、`ItemList`、对应分类 `Product`。
+- 联系页 `ContactPage`。
+- FAQ 页 `FAQPage`，只使用页面真实展示的问答。
+
+`app/index.html` 保留基础模板信息：
 
 - `lang="zh-CN"`。
 - title、description、keywords。
@@ -141,7 +172,7 @@ npm run preview:static -- 5175
 - 中文字体镜像预连接和字体样式表。
 - Organization 结构化数据。
 
-修改公司名称、电话、地址、业务范围时，要同步检查页面文案、`index.html` 的 meta 信息和结构化数据。
+修改公司名称、电话、地址、业务范围时，要同步检查页面文案、`site.ts`、`pages.ts`、结构化数据、页脚、`README.md` 和本文件。
 
 百度搜索资源平台当前状态：
 
@@ -149,6 +180,7 @@ npm run preview:static -- 5175
 - 2026-06-18 已新增并上线 `app/public/sitemap.xml` 与 `app/public/robots.txt`，线上地址分别为 `http://aqztjx.top/sitemap.xml` 和 `http://aqztjx.top/robots.txt`。
 - 百度普通收录已通过 API 成功提交 `http://aqztjx.top/`；`http://www.aqztjx.top/` 因未作为同一站点验证，百度返回 `not_same_site`，如需推送 `www` 需在百度搜索资源平台单独添加并验证 `www.aqztjx.top`。
 - 百度普通收录已通过 API 成功提交 `http://aqztjx.top/sitemap.xml`；后台 sitemap 表单中可填写同一地址。
+- 2026-06-18 已通过百度普通收录 API 成功提交 8 条正式多页 URL：首页、公司介绍、产品分类、三类设备详情、联系方式、常见问题。
 - 百度推送接口 token、后台账号、短信验证码等信息不得写入前端代码、文档、测试、提交信息或公开仓库。
 
 ## 备案与上线维护
@@ -156,6 +188,7 @@ npm run preview:static -- 5175
 - ICP 备案号当前为 `鲁ICP备2026031639号`，展示位置在 `app/src/components/layout/Footer.tsx`，链接应指向 `https://beian.miit.gov.cn/#/Integrated/index`。
 - 官网域名当前为 `aqztjx.top`，正式访问方式为阿里云 OSS 直连：`http://aqztjx.top/` 和 `http://www.aqztjx.top/`。
 - 阿里云 OSS Bucket 为 `aqztjx-site`，区域为华北2（北京）`oss-cn-beijing`；静态网站托管默认首页和默认 404 页均为 `index.html`，错误文档响应码为 `200`。
+- 当前正式多页 URL 使用 `.../index.html` 形式；不要把 canonical、sitemap 或站内导航改回目录斜杠形式，除非 OSS 静态网站规则已确认能让目录 URL 返回对应子页。
 - 本机 OSS 发布凭据备忘：2026-06-18 已在 RAM 创建程序用户 `aqztjx-site-deploy`，自定义策略 `tpl-aqztjx-site-put-object`，资源范围 `acs:oss:*:*:aqztjx-site/*`，权限仅含 `oss:GetObject` 和 `oss:PutObject`，不含删除权限；当前 Windows 用户环境变量和 `C:\Users\TomatoLaser\.ossutilconfig` 已写入对应凭据，但仓库内不得记录 AccessKey ID、AccessKey Secret 或凭据文件内容。
 - 当前 PATH 未检测到 `ossutil` 或 `ossutil64`；安装 ossutil 后，新开 PowerShell 并用 `ossutil ls oss://aqztjx-site` 验证凭据。
 - 当前暂不开通 CDN，HTTPS 也暂未配置；不要把 `app/index.html` 的 canonical、Open Graph URL 和结构化数据 URL 改成 `https://`，除非 HTTPS 已在阿里云侧验证可用。
@@ -173,5 +206,5 @@ npm run preview:static -- 5175
 - `app/docs/code-review-report.md` 是历史报告，其中部分“待修复”内容在当前源码里已经处理，例如滚动锁、错误边界、测试、SEO、页脚年份等。不要直接照报告结论改代码，先读当前文件。
 - `components/ui/` 下有大量 shadcn/ui 文件，删除前必须确认引用关系；同时受最高优先级删除规则限制，不能批量删除。
 - `package.json` 中可能存在暂未使用的依赖或 UI 组件，做瘦身前需要逐项验证。
-- `vite.config.ts` 设置了 `base: "./"`，这对静态部署路径有影响，改动前要确认部署方式。
+- `vite.config.ts` 设置了 `base: "/"`，嵌套静态页依赖根路径加载 CSS、JS 和图片；改动前要确认 OSS 发布方式。
 - 构建输出 `dist` 和测试覆盖率 `coverage` 已在 ESLint 全局忽略中。
