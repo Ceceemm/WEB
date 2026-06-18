@@ -108,6 +108,15 @@ ICP备案已通过，当前网站底部展示的备案号为 `鲁ICP备202603163
 - 当前暂不开通 CDN，HTTPS 也暂未配置；对外不要使用 `https://` 链接。
 - 当前项目为纯静态官网，不需要 ECS、数据库或后端服务器。
 
+本机 OSS 发布凭据备忘：
+
+- 2026-06-18 已在阿里云 RAM 快速开始中创建程序用户 `aqztjx-site-deploy`。
+- 已创建自定义策略 `tpl-aqztjx-site-put-object`，资源范围为 `acs:oss:*:*:aqztjx-site/*`。
+- 权限动作仅包含 `oss:GetObject` 与 `oss:PutObject`，用于读取和上传对象，不包含删除权限。
+- 本机已把凭据写入当前 Windows 用户环境变量，并创建 `C:\Users\TomatoLaser\.ossutilconfig`。
+- 当前 PATH 未检测到 `ossutil` 或 `ossutil64`；安装 ossutil 后，新开 PowerShell 再执行 `ossutil ls oss://aqztjx-site` 验证。
+- AccessKey ID、AccessKey Secret、下载的凭据文件不得写入仓库、文档、测试或提交信息。
+
 正式上线前后按以下顺序核对：
 
 - 将域名 `aqztjx.top` 解析到阿里云 OSS 静态托管资源。
