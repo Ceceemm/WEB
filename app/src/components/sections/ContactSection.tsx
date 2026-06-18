@@ -5,6 +5,7 @@ export function ContactSection() {
   return (
     <section
       id="contact"
+      data-nav-theme="warm"
       className="relative overflow-hidden bg-forge-orange py-20 md:py-28"
     >
       <div className="absolute inset-0 opacity-[0.12] factory-grid" />

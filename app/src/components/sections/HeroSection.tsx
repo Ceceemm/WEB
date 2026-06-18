@@ -11,6 +11,7 @@ export function HeroSection() {
   return (
     <section
       id="hero"
+      data-nav-theme="light"
       className="relative min-h-screen overflow-hidden bg-forge-paper pt-24 md:pt-28 factory-grid"
     >
       <div className="absolute right-0 top-0 h-full w-[44%] bg-forge-warm-text hidden lg:block" />

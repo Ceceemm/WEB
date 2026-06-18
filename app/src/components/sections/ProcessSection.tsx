@@ -26,7 +26,11 @@ const steps = [
 
 export function ProcessSection() {
   return (
-    <section id="process" className="relative overflow-hidden bg-forge-warm-text py-24 text-forge-paper md:py-32">
+    <section
+      id="process"
+      data-nav-theme="dark"
+      className="relative overflow-hidden bg-forge-warm-text py-24 text-forge-paper md:py-32"
+    >
       <div className="absolute inset-0 opacity-[0.08] factory-grid" />
       <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">
         <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">

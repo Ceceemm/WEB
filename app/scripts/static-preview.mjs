@@ -20,7 +20,11 @@ createServer((request, response) => {
   const cleanPath = normalize(decodeURIComponent(url.pathname)).replace(/^(\.\.[/\\])+/, '');
   let filePath = join(root, cleanPath === '/' ? 'index.html' : cleanPath);
 
-  if (!existsSync(filePath) || statSync(filePath).isDirectory()) {
+  if (existsSync(filePath) && statSync(filePath).isDirectory()) {
+    filePath = join(filePath, 'index.html');
+  }
+
+  if (!existsSync(filePath)) {
     filePath = join(root, 'index.html');
   }
 

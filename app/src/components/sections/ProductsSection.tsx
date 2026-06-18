@@ -18,6 +18,7 @@ export function ProductsSection() {
   return (
     <section
       id="products"
+      data-nav-theme="light"
       className="relative overflow-hidden bg-forge-paper py-24 [overflow-anchor:none] md:py-32"
     >
       <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">

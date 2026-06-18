@@ -4,8 +4,8 @@ import { defineConfig } from "vitest/config";
 import viteCompression from "vite-plugin-compression";
 
 // https://vite.dev/config/
-export default defineConfig({
-  base: "./",
+export default defineConfig(({ isSsrBuild }) => ({
+  base: "/",
   plugins: [
     react(),
     viteCompression({
@@ -24,10 +24,12 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          "vendor-react": ["react", "react-dom"],
-          "vendor-ui": ["lucide-react"],
-        },
+        manualChunks: isSsrBuild
+          ? undefined
+          : {
+              "vendor-react": ["react", "react-dom"],
+              "vendor-ui": ["lucide-react"],
+            },
         assetFileNames: (assetInfo) => {
           if (/\.(png|jpe?g|gif|svg|webp|avif)$/.test(assetInfo.name ?? "")) {
             return "images/[name]-[hash][extname]";
@@ -45,4 +47,4 @@ export default defineConfig({
     setupFiles: "./src/test-setup.ts",
     css: true,
   },
-});
+}));

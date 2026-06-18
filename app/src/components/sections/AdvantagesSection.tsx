@@ -27,7 +27,10 @@ const advantages = [
 
 export function AdvantagesSection() {
   return (
-    <section className="relative overflow-hidden bg-forge-paper py-24 md:py-32">
+    <section
+      data-nav-theme="light"
+      className="relative overflow-hidden bg-forge-paper py-24 md:py-32"
+    >
       <SectionNumber number="05" className="-top-8 -left-8 text-forge-warm-text/5" />
 
       <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">

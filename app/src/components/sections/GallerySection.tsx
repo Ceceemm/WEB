@@ -14,7 +14,11 @@ export function GallerySection() {
   const displayProducts = [...featured, ...rest];
 
   return (
-    <section id="gallery" className="relative py-24 md:py-32 overflow-hidden bg-forge-surface">
+    <section
+      id="gallery"
+      data-nav-theme="light"
+      className="relative py-24 md:py-32 overflow-hidden bg-forge-surface"
+    >
       <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">
         <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <ScrollReveal>

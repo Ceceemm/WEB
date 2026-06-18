@@ -5,7 +5,7 @@ const MPS_FILING_URL = 'https://beian.mps.gov.cn/#/query/webSearch?code=37078402
 
 export function Footer() {
   return (
-    <footer className="border-t border-forge-warm-border bg-forge-paper">
+    <footer data-nav-theme="light" className="border-t border-forge-warm-border bg-forge-paper">
       <div className="max-w-[1440px] mx-auto px-5 lg:px-10 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
         <p className="text-forge-warm-muted text-sm">
           &copy; {FOUNDING_YEAR}-{currentYear} 安丘市增涛机械有限公司

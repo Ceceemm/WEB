@@ -6,7 +6,11 @@ const yearsSinceFounding = new Date().getFullYear() - FOUNDING_YEAR;
 
 export function AboutSection() {
   return (
-    <section id="about" className="relative overflow-hidden bg-forge-surface py-24 md:py-32">
+    <section
+      id="about"
+      data-nav-theme="light"
+      className="relative overflow-hidden bg-forge-surface py-24 md:py-32"
+    >
       <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">
         <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-12 lg:gap-20 items-start">
           <ScrollReveal direction="right">

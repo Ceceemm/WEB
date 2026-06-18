@@ -1,41 +1,36 @@
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { SectionErrorBoundary } from '@/components/common/SectionErrorBoundary';
-import { HeroSection } from '@/components/sections/HeroSection';
-import { AboutSection } from '@/components/sections/AboutSection';
-import { ProductsSection } from '@/components/sections/ProductsSection';
-import { GallerySection } from '@/components/sections/GallerySection';
-import { AdvantagesSection } from '@/components/sections/AdvantagesSection';
-import { ProcessSection } from '@/components/sections/ProcessSection';
-import { ContactSection } from '@/components/sections/ContactSection';
+import { getPageByPath } from '@/data/pages';
+import { HomePage } from '@/pages/HomePage';
+import {
+  AboutPage,
+  CategoryPage,
+  ContactPage,
+  FaqPage,
+  ProductsOverviewPage,
+} from '@/pages/StaticPages';
 
-function App() {
+function App({ path }: { path?: string }) {
+  const currentPath =
+    path ?? (typeof window === 'undefined' ? '/' : window.location.pathname);
+  const page = getPageByPath(currentPath);
+
+  const pageContent = (() => {
+    if (page.kind === 'home') return <HomePage />;
+    if (page.kind === 'about') return <AboutPage />;
+    if (page.kind === 'products') return <ProductsOverviewPage />;
+    if (page.kind === 'category' && page.categoryKey) {
+      return <CategoryPage categoryKey={page.categoryKey} />;
+    }
+    if (page.kind === 'contact') return <ContactPage />;
+    if (page.kind === 'faq') return <FaqPage />;
+    return <HomePage />;
+  })();
+
   return (
     <div className="min-h-screen bg-forge-paper text-forge-warm-text font-body">
-      <Navbar />
-      <main>
-        <SectionErrorBoundary name="HeroSection">
-          <HeroSection />
-        </SectionErrorBoundary>
-        <SectionErrorBoundary name="AboutSection">
-          <AboutSection />
-        </SectionErrorBoundary>
-        <SectionErrorBoundary name="ProductsSection">
-          <ProductsSection />
-        </SectionErrorBoundary>
-        <SectionErrorBoundary name="ProcessSection">
-          <ProcessSection />
-        </SectionErrorBoundary>
-        <SectionErrorBoundary name="GallerySection">
-          <GallerySection />
-        </SectionErrorBoundary>
-        <SectionErrorBoundary name="AdvantagesSection">
-          <AdvantagesSection />
-        </SectionErrorBoundary>
-        <SectionErrorBoundary name="ContactSection">
-          <ContactSection />
-        </SectionErrorBoundary>
-      </main>
+      <Navbar initialTheme={page.kind === 'home' ? 'light' : 'dark'} />
+      <main>{pageContent}</main>
       <Footer />
     </div>
   );

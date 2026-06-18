@@ -17,6 +17,7 @@ export function ScrollReveal({
 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(() =>
+    typeof window === 'undefined' ||
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
   );
 
