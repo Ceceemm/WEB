@@ -143,6 +143,14 @@ npm run preview:static -- 5175
 
 修改公司名称、电话、地址、业务范围时，要同步检查页面文案、`index.html` 的 meta 信息和结构化数据。
 
+百度搜索资源平台当前状态：
+
+- 2026-06-18 已完成 `aqztjx.top` 站点验证，验证文件为 `app/public/baidu_verify_codeva-hNgqSnR0KO.html`，线上访问地址为 `http://aqztjx.top/baidu_verify_codeva-hNgqSnR0KO.html`。
+- 2026-06-18 已新增并上线 `app/public/sitemap.xml` 与 `app/public/robots.txt`，线上地址分别为 `http://aqztjx.top/sitemap.xml` 和 `http://aqztjx.top/robots.txt`。
+- 百度普通收录已通过 API 成功提交 `http://aqztjx.top/`；`http://www.aqztjx.top/` 因未作为同一站点验证，百度返回 `not_same_site`，如需推送 `www` 需在百度搜索资源平台单独添加并验证 `www.aqztjx.top`。
+- 百度普通收录已通过 API 成功提交 `http://aqztjx.top/sitemap.xml`；后台 sitemap 表单中可填写同一地址。
+- 百度推送接口 token、后台账号、短信验证码等信息不得写入前端代码、文档、测试、提交信息或公开仓库。
+
 ## 备案与上线维护
 
 - ICP 备案号当前为 `鲁ICP备2026031639号`，展示位置在 `app/src/components/layout/Footer.tsx`，链接应指向 `https://beian.miit.gov.cn/#/Integrated/index`。
