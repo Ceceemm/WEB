@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: http://aqztjx.top/sitemap.xml
