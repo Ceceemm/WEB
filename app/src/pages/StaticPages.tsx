@@ -92,6 +92,10 @@ export function AboutPage() {
               并围绕原料、产量、场地、电力条件和出料方式确认设备方案。
             </p>
             <p>
+              设备发货前会围绕压力、输送、传动、安全部位和基础运行状态进行调试检查，
+              减少到场后的安装和试机沟通成本。
+            </p>
+            <p>
               统一社会信用代码：
               <span className="font-mono font-semibold text-forge-warm-text">
                 {siteInfo.registrationNumber}
