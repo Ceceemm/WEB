@@ -193,6 +193,7 @@ Bing / IndexNow 协作状态：
 - DeepSeek 只用于生成公司、产品、FAQ 和外部平台简介等内容草稿；确认后的内容再写入项目。
 - Codex 负责站点代码、结构化数据、sitemap、IndexNow 脚本和本地验证。
 - 操作者负责登录 Bing Webmaster Tools、验证站点和查看后台数据。
+- 2026-06-19 已根据 Reasonix 确认稿补充 4 条 FAQ，并把外部平台可复制文案记录到 `README.md`。
 - IndexNow 公开验证文件为 `app/public/b00aa3db8702439f8eab75fdb067f3c4.txt`；这是公开站点验证 key，不是账号凭据。
 - 每次正式构建并发布后，可在 `app/` 目录运行 `D:\soft\npm.cmd run submit:indexnow:dry` 核对提交列表，再运行 `D:\soft\npm.cmd run submit:indexnow` 通知 Bing。
 - Bing 后台账号、验证码、站长工具敏感截图、临时 token 不得写入前端代码、文档、测试、提交信息或公开仓库。
