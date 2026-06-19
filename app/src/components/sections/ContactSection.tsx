@@ -6,16 +6,16 @@ export function ContactSection() {
     <section
       id="contact"
       data-nav-theme="warm"
-      className="relative overflow-hidden bg-forge-orange py-20 md:py-28"
+      className="relative overflow-hidden bg-forge-orange py-16 md:py-28"
     >
       <div className="absolute inset-0 opacity-[0.12] factory-grid" />
       <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">
-        <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-stretch">
+        <div className="grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-stretch md:gap-10">
           <ScrollReveal direction="right">
             <div className="flex h-full flex-col justify-between border border-forge-warm-text bg-forge-orange p-7 md:p-10">
               <div>
                 <p className="text-sm font-semibold text-forge-warm-text">联系我们</p>
-                <h2 className="mt-5 space-y-[2mm] font-display text-5xl md:text-7xl font-black leading-none text-forge-warm-text">
+                <h2 className="mt-3 space-y-[2mm] font-display text-4xl md:text-7xl font-black leading-none text-forge-warm-text md:mt-5">
                   <span className="block">需要选型</span>
                   <span className="block">先打电话</span>
                 </h2>
@@ -34,7 +34,7 @@ export function ContactSection() {
         </div>
 
         <ScrollReveal delay={150}>
-          <div className="mt-10 grid overflow-hidden border border-forge-warm-text bg-forge-paper lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="mt-6 grid overflow-hidden border border-forge-warm-text bg-forge-paper lg:grid-cols-[1.05fr_0.95fr] md:mt-10">
             <div className="relative min-h-[320px] bg-forge-surface">
               <img
                 src="/images/company-map.png"
@@ -46,12 +46,12 @@ export function ContactSection() {
 
             <div className="border-t border-forge-warm-text p-7 md:p-10 lg:border-l lg:border-t-0">
               <p className="text-sm font-semibold text-forge-orange">地址定位</p>
-              <h3 className="mt-4 font-display text-3xl font-black leading-tight text-forge-warm-text md:text-5xl">
+              <h3 className="mt-4 font-display text-2xl font-black leading-tight text-forge-warm-text md:text-5xl">
                 山东省潍坊市安丘市
                 <br />
                 金安产业园以南
               </h3>
-              <p className="mt-6 max-w-xl text-forge-warm-muted leading-8">
+              <p className="mt-4 max-w-xl text-forge-warm-muted leading-8 md:mt-6">
                 生产制造基地位于安丘市，便于周边客户实地看机、沟通配置和确认发货安排。
               </p>
               <a
@@ -83,7 +83,7 @@ function ContactRow({
   href?: string;
 }) {
   const content = (
-    <div className="group flex min-h-[126px] items-center justify-between gap-6 bg-forge-paper p-6 transition-colors hover:bg-forge-surface md:p-8">
+    <div className="group flex min-h-[100px] items-center justify-between gap-4 bg-forge-paper p-5 transition-colors hover:bg-forge-surface md:min-h-[126px] md:gap-6 md:p-8">
       <div className="flex items-center gap-5">
         <span className="flex h-12 w-12 shrink-0 items-center justify-center border border-forge-warm-border bg-forge-surface text-forge-orange">
           <Icon size={22} aria-hidden="true" />

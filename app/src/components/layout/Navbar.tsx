@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Menu, Phone, X } from 'lucide-react';
+import { Menu, MessageCircle, Phone, X } from 'lucide-react';
 import { useScrollLock } from '@/hooks/use-scroll-lock';
 import { navPages } from '@/data/pages';
 import { siteInfo } from '@/data/site';
@@ -92,18 +92,21 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
         ref={navRef}
         className={`fixed top-0 left-0 right-0 z-50 border-b transition-colors duration-300 ${theme.nav}`}
       >
-        <div className="max-w-[1440px] mx-auto px-5 lg:px-10 flex items-center justify-between h-16 md:h-[76px]">
-          <a href="/" className={`group flex items-center gap-3 transition-colors ${theme.brand}`}>
+        <div className="mx-auto flex h-14 max-w-[1440px] items-center justify-between px-4 sm:h-16 sm:px-5 md:h-[76px] lg:px-10">
+          <a
+            href="/"
+            className={`group flex shrink-0 items-center gap-2.5 transition-colors sm:gap-3 ${theme.brand}`}
+          >
             <img
               src="/images/logo-zt.svg"
               alt="增涛机械"
-              className="h-11 w-11 border border-forge-warm-border bg-forge-surface object-contain p-1"
+              className="h-9 w-9 shrink-0 border border-forge-warm-border bg-forge-surface object-contain p-1 sm:h-11 sm:w-11"
             />
-            <span className="flex flex-col leading-none">
-              <span className="font-display font-black text-base md:text-lg tracking-wide group-hover:text-forge-orange">
+            <span className="flex shrink-0 flex-col leading-none">
+              <span className="whitespace-nowrap font-display text-sm font-black tracking-normal group-hover:text-forge-orange sm:text-base md:text-lg">
                 安丘增涛机械
               </span>
-              <span className={`mt-1 text-[10px] tracking-[0.18em] transition-colors ${theme.subBrand}`}>
+              <span className={`mt-1 text-[9px] tracking-[0.16em] transition-colors sm:text-[10px] ${theme.subBrand}`}>
                 MACHINE WORKS
               </span>
             </span>
@@ -133,7 +136,7 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
-            className={`lg:hidden transition-colors ${theme.menu}`}
+            className={`inline-flex h-11 w-11 items-center justify-center border border-current/25 transition-colors lg:hidden ${theme.menu}`}
             aria-label="打开菜单"
             aria-controls="mobile-menu"
             aria-expanded={mobileOpen}
@@ -147,35 +150,59 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
       <div
         id="mobile-menu"
         aria-hidden={!mobileOpen}
-        className={`fixed inset-0 z-[60] bg-forge-orange transition-transform duration-500 lg:hidden ${
+        className={`fixed inset-0 z-[60] overflow-y-auto bg-forge-orange transition-transform duration-500 lg:hidden ${
           mobileOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
         }`}
       >
-        <div className="flex justify-end p-6">
-          <button
-            type="button"
-            onClick={() => setMobileOpen(false)}
-            className="text-forge-white hover:text-forge-black transition-colors"
-            aria-label="关闭菜单"
-            tabIndex={mobileOpen ? 0 : -1}
-          >
-            <X size={28} />
-          </button>
-        </div>
-
-        <div className="flex flex-col items-center justify-center gap-7 mt-10">
-          {navPages.map((link, i) => (
-            <a
-              key={link.path}
-              href={link.path}
+        <div className="flex min-h-dvh flex-col px-5 py-5">
+          <div className="flex items-center justify-between">
+            <div className="text-forge-warm-text">
+              <p className="font-display text-xl font-black">安丘增涛机械</p>
+              <p className="mt-1 text-xs font-semibold tracking-[0.16em] text-forge-warm-text/70">
+                设备咨询入口
+              </p>
+            </div>
+            <button
+              type="button"
               onClick={() => setMobileOpen(false)}
-              className="text-2xl font-display font-bold text-forge-white hover:text-forge-black transition-colors"
-              style={{ animationDelay: `${i * 80}ms` }}
+              className="inline-flex h-11 w-11 items-center justify-center border border-forge-warm-text text-forge-warm-text transition-colors hover:border-forge-paper hover:text-forge-paper"
+              aria-label="关闭菜单"
               tabIndex={mobileOpen ? 0 : -1}
             >
-              {link.navLabel}
+              <X size={26} />
+            </button>
+          </div>
+
+          <div className="flex flex-1 flex-col justify-center gap-4 py-10">
+            {navPages.map((link, i) => (
+              <a
+                key={link.path}
+                href={link.path}
+                onClick={() => setMobileOpen(false)}
+                className="border-b border-forge-warm-text/24 py-4 font-display text-xl font-bold text-forge-warm-text transition-colors hover:text-forge-paper sm:text-2xl"
+                style={{ animationDelay: `${i * 80}ms` }}
+                tabIndex={mobileOpen ? 0 : -1}
+              >
+                {link.navLabel}
+              </a>
+            ))}
+          </div>
+
+          <div className="grid gap-2 border-t border-forge-warm-text/30 pt-4 sm:gap-3 sm:pt-5">
+            <a
+              href={`tel:${siteInfo.phone}`}
+              onClick={() => setMobileOpen(false)}
+              className="inline-flex min-h-12 items-center justify-center gap-2 border border-forge-warm-text bg-forge-warm-text px-4 text-sm font-semibold text-forge-paper"
+              tabIndex={mobileOpen ? 0 : -1}
+            >
+              <Phone size={18} aria-hidden="true" />
+              电话咨询 {siteInfo.phone}
             </a>
-          ))}
+            <div className="inline-flex min-h-12 items-center justify-center gap-2 border border-forge-warm-text px-4 text-sm font-semibold text-forge-warm-text">
+              <MessageCircle size={18} aria-hidden="true" />
+              微信 {siteInfo.wechat}
+            </div>
+          </div>
         </div>
       </div>
     </>

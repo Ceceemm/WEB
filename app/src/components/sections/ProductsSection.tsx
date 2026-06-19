@@ -19,14 +19,14 @@ export function ProductsSection() {
     <section
       id="products"
       data-nav-theme="light"
-      className="relative overflow-hidden bg-forge-paper py-24 [overflow-anchor:none] md:py-32"
+      className="relative overflow-hidden bg-forge-paper py-16 [overflow-anchor:none] md:py-32"
     >
       <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">
-        <div className="mb-12 grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+        <div className="mb-8 grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-end md:mb-12">
           <ScrollReveal>
             <div>
               <p className="text-sm font-semibold text-forge-orange">产品系列</p>
-              <h2 className="mt-4 font-display text-4xl md:text-6xl font-black leading-tight text-forge-warm-text">
+              <h2 className="mt-4 font-display text-3xl md:text-6xl font-black leading-tight text-forge-warm-text">
                 按现场工序选设备
               </h2>
             </div>
@@ -41,7 +41,7 @@ export function ProductsSection() {
         {/* Category Tabs */}
         <ScrollReveal delay={100}>
           <div
-            className="mb-10 grid gap-2 border-y border-forge-warm-border py-2 sm:grid-cols-3"
+            className="mb-6 grid gap-2 border-y border-forge-warm-border py-2 sm:grid-cols-3 md:mb-10"
             role="tablist"
             aria-label="产品分类"
           >
@@ -120,9 +120,9 @@ function ProductCard({ product }: { product: Product }) {
       </div>
 
       {/* Info */}
-      <div className="min-h-[154px] p-5">
-        <div className="flex items-start justify-between gap-4">
-          <h3 className="font-display font-black text-xl text-forge-warm-text group-hover:text-forge-orange transition-colors">
+      <div className="min-h-[140px] p-4 md:min-h-[154px] md:p-5">
+        <div className="flex items-start justify-between gap-3 md:gap-4">
+          <h3 className="font-display font-black text-lg text-forge-warm-text group-hover:text-forge-orange transition-colors md:text-xl">
             {product.name}
           </h3>
           <ArrowUpRight size={18} className="mt-1 shrink-0 text-forge-warm-muted group-hover:text-forge-orange" aria-hidden="true" />

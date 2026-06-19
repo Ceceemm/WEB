@@ -17,14 +17,14 @@ export function GallerySection() {
     <section
       id="gallery"
       data-nav-theme="light"
-      className="relative py-24 md:py-32 overflow-hidden bg-forge-surface"
+      className="relative py-16 md:py-32 overflow-hidden bg-forge-surface"
     >
       <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">
-        <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div className="mb-8 flex flex-col gap-5 md:mb-12 md:flex-row md:items-end md:justify-between">
           <ScrollReveal>
             <div>
               <p className="text-sm font-semibold text-forge-orange">设备实拍</p>
-              <h2 className="mt-4 font-display font-black text-4xl md:text-6xl text-forge-warm-text">
+              <h2 className="mt-4 font-display font-black text-3xl md:text-6xl text-forge-warm-text">
                 真实机器，比渲染图更有用
               </h2>
             </div>
@@ -68,8 +68,8 @@ export function GallerySection() {
                   </div>
 
                   {/* Label */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-forge-warm-text/82">
-                    <p className="text-forge-paper font-display font-bold text-sm text-stroke-forge group-hover:text-forge-orange transition-colors">
+                  <div className="absolute bottom-0 left-0 right-0 bg-forge-warm-text/82 p-3 md:p-4">
+                    <p className="text-forge-paper font-display font-bold text-xs group-hover:text-forge-orange transition-colors md:text-sm md:text-stroke-forge">
                       {product.name}
                     </p>
                   </div>
