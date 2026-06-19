@@ -43,6 +43,7 @@ Remove-Item "C:\path\to\file.txt"
 - `app/src/pages/`：首页和新增静态多页内容。
 - `app/scripts/prerender.mjs`：生产构建后生成 `dist/**/index.html`。
 - `app/scripts/deploy-oss.mjs`：读取本机 `.ossutilconfig` 并上传 `app/dist` 到阿里云 OSS，不执行删除。
+- `app/scripts/submit-indexnow.mjs`：读取 `dist/sitemap.xml` 并向 Bing IndexNow 提交正式 URL。
 - `app/public/images/products/`：产品图片，基本同时提供 `.jpg` 与 `.webp`。
 - `app/src/components/sections/`：页面各业务区块。
 - `app/src/components/common/`：通用组件，如滚动出现、WebP 图片、灯箱、错误边界。
@@ -81,6 +82,7 @@ npm run preview:static -- 5175
 - `npm run check` 依次执行 lint、测试、构建，适合作为最终验证。
 - `npm run preview:static -- 端口号` 使用 `app/dist` 启动轻量静态预览，适合 Codex 内置浏览器打不开 Vite 后台服务时使用。
 - `D:\soft\node.exe scripts\deploy-oss.mjs` 上传 `app/dist` 到阿里云 OSS；该脚本只执行 PutObject 覆盖/新增，不删除 OSS 对象。
+- `npm run submit:indexnow:dry` 预览将提交给 Bing IndexNow 的 URL；`npm run submit:indexnow` 正式提交。
 - 本机 PowerShell 中不要直接依赖 `npm`，优先显式调用 `D:\soft\npm.cmd`，避免命中 `npm.ps1` 执行策略限制。
 - 如果 Codex 内置浏览器提示 `127.0.0.1` 拒绝连接，先用 `Invoke-WebRequest http://127.0.0.1:<端口>/` 验证端口是否真返回 `200`；若 Vite 或 `npm` 后台服务假活或退出，先执行 `D:\soft\npm.cmd run build`，再用 `D:\soft\node.exe scripts/static-preview.mjs <当前浏览器端口>` 直接接管该端口。通过 Codex 启动长期预览服务时，需要批准沙箱外 `Start-Process`，普通沙箱子进程可能在命令结束后被回收。
 
@@ -185,6 +187,15 @@ SEO 信息由 `app/src/data/pages.ts`、`app/src/data/site.ts`、`app/src/data/s
 - 百度普通收录已通过 API 成功提交 `http://aqztjx.top/sitemap.xml`；后台 sitemap 表单中可填写同一地址。
 - 2026-06-18 已通过百度普通收录 API 成功提交 8 条正式多页 URL：首页、公司介绍、产品分类、三类设备详情、联系方式、常见问题。
 - 百度推送接口 token、后台账号、短信验证码等信息不得写入前端代码、文档、测试、提交信息或公开仓库。
+
+Bing / IndexNow 协作状态：
+
+- DeepSeek 只用于生成公司、产品、FAQ 和外部平台简介等内容草稿；确认后的内容再写入项目。
+- Codex 负责站点代码、结构化数据、sitemap、IndexNow 脚本和本地验证。
+- 操作者负责登录 Bing Webmaster Tools、验证站点和查看后台数据。
+- IndexNow 公开验证文件为 `app/public/b00aa3db8702439f8eab75fdb067f3c4.txt`；这是公开站点验证 key，不是账号凭据。
+- 每次正式构建并发布后，可在 `app/` 目录运行 `D:\soft\npm.cmd run submit:indexnow:dry` 核对提交列表，再运行 `D:\soft\npm.cmd run submit:indexnow` 通知 Bing。
+- Bing 后台账号、验证码、站长工具敏感截图、临时 token 不得写入前端代码、文档、测试、提交信息或公开仓库。
 
 ## 备案与上线维护
 

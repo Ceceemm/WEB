@@ -148,6 +148,15 @@ ICP备案已通过，当前网站底部展示的备案号为 `鲁ICP备202603163
 - 2026-06-18 已通过百度普通收录 API 成功提交 8 条正式 URL：首页、公司介绍、产品分类、三类设备详情、联系方式、常见问题。
 - 百度推送接口 token 不得写入仓库、文档、测试或提交信息；需要推送时由操作者临时提供。
 
+Bing / IndexNow 分工合作：
+
+- DeepSeek 适合生成公司简介、产品说明、FAQ、外部平台简介等内容草稿。
+- Codex 负责把确认后的内容写入站点页面、结构化数据、sitemap 和提交脚本，并完成本地检查。
+- 操作者负责登录 Bing Webmaster Tools，添加并验证 `aqztjx.top`，提交 `http://aqztjx.top/sitemap.xml`。
+- IndexNow 公开验证文件为 `app/public/b00aa3db8702439f8eab75fdb067f3c4.txt`，该文件会随构建发布到站点根目录。
+- 每次构建并发布成功后，可在 `app/` 目录先运行 `D:\soft\npm.cmd run submit:indexnow:dry` 检查提交内容，再运行 `D:\soft\npm.cmd run submit:indexnow` 通知 Bing。
+- Bing 账号、验证码、后台截图中的敏感信息不得写入仓库、文档、测试或提交信息。
+
 正式上线前后按以下顺序核对：
 
 - 将域名 `aqztjx.top` 解析到阿里云 OSS 静态托管资源。
