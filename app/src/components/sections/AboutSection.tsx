@@ -9,14 +9,14 @@ export function AboutSection() {
     <section
       id="about"
       data-nav-theme="light"
-      className="relative overflow-hidden bg-forge-surface py-24 md:py-32"
+      className="relative overflow-hidden bg-forge-surface py-16 md:py-32"
     >
       <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">
-        <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-12 lg:gap-20 items-start">
+        <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-8 lg:gap-20 items-start md:gap-12">
           <ScrollReveal direction="right">
             <div className="sticky top-28">
               <p className="text-sm font-semibold text-forge-orange">公司概况</p>
-              <h2 className="mt-5 max-w-[10ch] font-display text-4xl md:text-6xl font-black leading-tight text-forge-warm-text">
+              <h2 className="mt-5 max-w-[10ch] font-display text-3xl md:text-6xl font-black leading-tight text-forge-warm-text">
                 做能进现场的机器
               </h2>
               <div className="spec-rule mt-8 w-full max-w-sm" />
@@ -24,7 +24,7 @@ export function AboutSection() {
           </ScrollReveal>
 
           <ScrollReveal direction="right">
-            <div className="max-w-3xl space-y-6 text-forge-warm-muted leading-9 text-base md:text-lg">
+            <div className="max-w-3xl space-y-5 text-forge-warm-muted leading-8 text-base md:space-y-6 md:text-lg md:leading-9">
               <p>
                 安丘市增涛机械有限公司成立于
                 <span className="text-forge-orange font-mono font-bold"> 2012 </span>
@@ -43,13 +43,13 @@ export function AboutSection() {
               </p>
             </div>
 
-            <div className="mt-12 grid gap-4 sm:grid-cols-3">
+            <div className="mt-8 grid gap-4 sm:grid-cols-3 md:mt-12">
               <Fact icon={Factory} label="制造属性" value="研发 / 生产 / 销售" />
               <Fact icon={ShieldCheck} label="注册资本" value="200万元" />
               <Fact icon={MapPinned} label="成立至今" value={`${yearsSinceFounding}年`} />
             </div>
 
-            <div className="mt-8 border border-forge-warm-border bg-forge-paper p-5 text-sm text-forge-warm-muted">
+            <div className="mt-6 border border-forge-warm-border bg-forge-paper p-4 text-sm text-forge-warm-muted md:mt-8 md:p-5">
               注册号：<span className="font-mono text-forge-warm-text">91370784MA3C52AM0W</span>
             </div>
           </ScrollReveal>

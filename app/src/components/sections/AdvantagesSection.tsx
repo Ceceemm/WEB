@@ -29,14 +29,14 @@ export function AdvantagesSection() {
   return (
     <section
       data-nav-theme="light"
-      className="relative overflow-hidden bg-forge-paper py-24 md:py-32"
+      className="relative overflow-hidden bg-forge-paper py-16 md:py-32"
     >
       <SectionNumber number="05" className="-top-8 -left-8 text-forge-warm-text/5" />
 
       <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">
-        <div className="mb-12 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+        <div className="mb-8 grid gap-6 lg:grid-cols-[0.8fr_1.2fr] md:mb-12">
           <ScrollReveal>
-            <h2 className="font-display font-black text-4xl md:text-6xl text-forge-warm-text">
+            <h2 className="font-display font-black text-3xl md:text-6xl text-forge-warm-text">
               为什么选择我们
             </h2>
           </ScrollReveal>
@@ -50,7 +50,7 @@ export function AdvantagesSection() {
         <div className="grid grid-cols-1 gap-px border border-forge-warm-border bg-forge-warm-border sm:grid-cols-2 lg:grid-cols-4">
           {advantages.map((item, index) => (
             <ScrollReveal key={item.title} delay={index * 100}>
-              <div className="group relative min-h-[250px] bg-forge-surface p-7 transition-colors duration-300 hover:bg-forge-warm-text">
+              <div className="group relative min-h-[200px] bg-forge-surface p-6 transition-colors duration-300 hover:bg-forge-warm-text md:min-h-[250px] md:p-7">
                 <div className="flex h-full flex-col justify-between gap-10">
                   <div className="flex h-12 w-12 items-center justify-center border border-forge-warm-border group-hover:border-forge-orange">
                     <item.icon

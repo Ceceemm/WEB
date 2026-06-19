@@ -17,15 +17,15 @@ function PageHero({
   return (
     <section
       data-nav-theme="dark"
-      className="relative overflow-hidden bg-forge-warm-text pb-16 pt-28 text-forge-paper md:pb-24 md:pt-36"
+      className="relative overflow-hidden bg-forge-warm-text pb-12 pt-24 text-forge-paper md:pb-24 md:pt-36"
     >
       <div className="absolute inset-0 opacity-[0.08] factory-grid" />
       <div className="relative z-10 mx-auto max-w-[1440px] px-5 lg:px-10">
         <p className="text-sm font-semibold text-forge-orange">{eyebrow}</p>
-        <h1 className="mt-5 max-w-5xl font-display text-5xl font-black leading-tight md:text-7xl">
+        <h1 className="mt-4 max-w-5xl font-display text-3xl font-black leading-tight md:mt-5 md:text-7xl">
           {title}
         </h1>
-        <p className="mt-6 max-w-3xl text-base leading-8 text-forge-cream/78 md:text-lg">
+        <p className="mt-4 max-w-3xl text-sm leading-7 text-forge-cream/78 md:mt-6 md:text-lg md:leading-8">
           {description}
         </p>
       </div>
@@ -35,7 +35,7 @@ function PageHero({
 
 function TextBand({ children }: { children: React.ReactNode }) {
   return (
-    <section data-nav-theme="light" className="bg-forge-paper py-16 md:py-24">
+    <section data-nav-theme="light" className="bg-forge-paper py-12 md:py-24">
       <div className="mx-auto max-w-[1440px] px-5 lg:px-10">{children}</div>
     </section>
   );
@@ -78,11 +78,11 @@ export function AboutPage() {
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <p className="text-sm font-semibold text-forge-orange">制造属性</p>
-            <h2 className="mt-4 font-display text-4xl font-black leading-tight text-forge-warm-text">
+            <h2 className="mt-4 font-display text-3xl font-black leading-tight text-forge-warm-text md:text-4xl">
               做能进现场的机器
             </h2>
           </div>
-          <div className="space-y-6 text-base leading-8 text-forge-warm-muted md:text-lg">
+          <div className="space-y-5 text-base leading-8 text-forge-warm-muted md:space-y-6 md:text-lg">
             <p>
               公司主营油脂加工机械、饲料生产专用设备、农田平地机械及农田挖掘机械，
               产品涵盖螺旋榨油机、液压榨油机、煤炭装袋机等多个系列。
@@ -104,7 +104,7 @@ export function AboutPage() {
             </p>
           </div>
         </div>
-        <div className="mt-12 grid gap-4 md:grid-cols-3">
+        <div className="mt-8 grid gap-4 md:mt-12 md:grid-cols-3">
           <InfoTile icon={Factory} title="主营业务" text="油脂加工机械、处理设备、装袋设备" />
           <InfoTile icon={MapPin} title="制造基地" text={siteInfo.address.text} />
           <InfoTile icon={Phone} title="咨询热线" text={siteInfo.phone} />
@@ -124,7 +124,7 @@ function InfoTile({
   text: string;
 }) {
   return (
-    <div className="border border-forge-warm-border bg-forge-surface p-6">
+    <div className="border border-forge-warm-border bg-forge-surface p-5 md:p-6">
       <Icon size={24} className="text-forge-orange" aria-hidden="true" />
       <h2 className="mt-5 font-display text-2xl font-black text-forge-warm-text">{title}</h2>
       <p className="mt-3 text-sm leading-7 text-forge-warm-muted">{text}</p>
@@ -172,7 +172,7 @@ export function CategoryPage({ categoryKey }: { categoryKey: ProductCategory['ke
         <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <p className="text-sm font-semibold text-forge-orange">适用场景</p>
-            <h2 className="mt-4 font-display text-4xl font-black leading-tight text-forge-warm-text">
+            <h2 className="mt-4 font-display text-3xl font-black leading-tight text-forge-warm-text md:text-4xl">
               按工况确认型号
             </h2>
             <p className="mt-6 text-base leading-8 text-forge-warm-muted">{detail.intro}</p>
@@ -197,8 +197,8 @@ export function CategoryPage({ categoryKey }: { categoryKey: ProductCategory['ke
                   useWebp={product.hasWebp !== false}
                 />
               </div>
-              <div className="min-h-[150px] p-5">
-                <h2 className="font-display text-xl font-black text-forge-warm-text">
+              <div className="min-h-[130px] p-4 md:min-h-[150px] md:p-5">
+                <h2 className="font-display text-lg font-black text-forge-warm-text md:text-xl">
                   {product.name}
                 </h2>
                 <p className="mt-3 text-sm leading-7 text-forge-warm-muted">
@@ -235,10 +235,10 @@ export function ContactPage() {
             loading="lazy"
           />
           <div className="p-7 md:p-10">
-            <h2 className="font-display text-3xl font-black text-forge-warm-text">
+            <h2 className="font-display text-2xl font-black text-forge-warm-text md:text-3xl">
               服务地区
             </h2>
-            <p className="mt-5 text-base leading-8 text-forge-warm-muted">
+            <p className="mt-4 text-base leading-8 text-forge-warm-muted md:mt-5">
               当前重点服务地区包括{siteInfo.serviceAreas.join('、')}。外地客户也可以先通过电话或微信沟通原料、产量、场地和发货安排。
             </p>
             <a
@@ -269,9 +269,9 @@ function ContactTile({
   href?: string;
 }) {
   const body = (
-    <div className="bg-forge-surface p-6">
+    <div className="bg-forge-surface p-5 md:p-6">
       <Icon size={24} className="text-forge-orange" aria-hidden="true" />
-      <h2 className="mt-5 text-sm text-forge-warm-muted">{title}</h2>
+      <h2 className="mt-4 text-sm text-forge-warm-muted md:mt-5">{title}</h2>
       <p className="mt-2 break-all font-mono text-xl font-bold text-forge-warm-text">{value}</p>
     </div>
   );
@@ -290,8 +290,8 @@ export function FaqPage() {
       <TextBand>
         <div className="grid gap-px border border-forge-warm-border bg-forge-warm-border">
           {faqItems.map((item) => (
-            <article key={item.question} className="bg-forge-surface p-6 md:p-8">
-              <h2 className="font-display text-2xl font-black text-forge-warm-text">
+            <article key={item.question} className="bg-forge-surface p-5 md:p-8">
+              <h2 className="font-display text-xl font-black text-forge-warm-text md:text-2xl">
                 {item.question}
               </h2>
               <p className="mt-4 text-base leading-8 text-forge-warm-muted">{item.answer}</p>

@@ -29,15 +29,15 @@ export function ProcessSection() {
     <section
       id="process"
       data-nav-theme="dark"
-      className="relative overflow-hidden bg-forge-warm-text py-24 text-forge-paper md:py-32"
+      className="relative overflow-hidden bg-forge-warm-text py-16 text-forge-paper md:py-32"
     >
       <div className="absolute inset-0 opacity-[0.08] factory-grid" />
       <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">
-        <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+        <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start md:gap-10">
           <ScrollReveal direction="right">
             <div>
               <p className="text-sm font-semibold text-forge-orange">制造流程</p>
-              <h2 className="mt-4 space-y-[2mm] font-display text-4xl md:text-6xl font-black leading-none">
+              <h2 className="mt-4 space-y-[2mm] font-display text-3xl md:text-6xl font-black leading-none">
                 <span className="block">从需求到出厂</span>
                 <span className="block">一步一步落地</span>
               </h2>
