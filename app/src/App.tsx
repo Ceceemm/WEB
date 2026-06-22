@@ -7,6 +7,7 @@ import {
   CategoryPage,
   ContactPage,
   FaqPage,
+  ProductDetailPage,
   ProductsOverviewPage,
 } from '@/pages/StaticPages';
 
@@ -24,6 +25,7 @@ function App({ path }: { path?: string }) {
     }
     if (page.kind === 'contact') return <ContactPage />;
     if (page.kind === 'faq') return <FaqPage />;
+    if (page.kind === 'product') return <ProductDetailPage path={page.path} />;
     return <HomePage />;
   })();
 

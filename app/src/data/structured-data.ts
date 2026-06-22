@@ -1,5 +1,5 @@
-import { getCategoryProducts, pageRoutes, type PageMeta } from './pages';
-import { productCategories } from './products';
+import { categoryDetails, getCategoryProducts, getProductPageDetailByPath, pageRoutes, type PageMeta } from './pages';
+import { productCategories, products } from './products';
 import { faqItems, siteInfo } from './site';
 
 const businessId = `${siteInfo.url}/#business`;
@@ -57,8 +57,10 @@ function baseGraph(): JsonLdNode[] {
 }
 
 function breadcrumbGraph(page: PageMeta): JsonLdNode {
-  const productRoot = page.path.startsWith('/chanpin/') && page.path !== '/chanpin/';
-  const items = [
+  const isProduct = page.kind === 'product' && page.productId;
+  const productRoot = page.path.startsWith('/chanpin/') && page.path !== '/chanpin/index.html';
+
+  const items: JsonLdNode[] = [
     {
       '@type': 'ListItem',
       position: 1,
@@ -72,8 +74,29 @@ function breadcrumbGraph(page: PageMeta): JsonLdNode {
       '@type': 'ListItem',
       position: 2,
       name: '产品分类',
-      item: absoluteUrl('/chanpin/'),
+      item: absoluteUrl('/chanpin/index.html'),
     });
+  }
+
+  if (isProduct) {
+    const detail = getProductPageDetailByPath(page.path);
+    if (detail) {
+      const catDetail = categoryDetails[detail.categoryKey];
+      const cat = productCategories.find((c) => c.key === detail.categoryKey);
+      items.push({
+        '@type': 'ListItem',
+        position: 3,
+        name: cat?.label ?? catDetail.h1,
+        item: absoluteUrl(catDetail.path),
+      });
+      items.push({
+        '@type': 'ListItem',
+        position: 4,
+        name: detail.h1,
+        item: absoluteUrl(detail.path),
+      });
+    }
+  } else if (productRoot) {
     items.push({
       '@type': 'ListItem',
       position: 3,
@@ -190,13 +213,60 @@ export function getStructuredData(page: PageMeta) {
     });
   }
 
+  if (page.kind === 'product') {
+    const detail = getProductPageDetailByPath(page.path);
+    if (detail) {
+      const prod = products.find((p) => p.id === detail.productId);
+      const cat = productCategories.find((c) => c.key === detail.categoryKey);
+
+      graph.push({
+        '@type': 'WebPage',
+        '@id': `${absoluteUrl(page.path)}#webpage`,
+        url: absoluteUrl(page.path),
+        name: page.h1,
+        description: page.description,
+        isPartOf: { '@id': websiteId },
+        about: { '@id': businessId },
+        inLanguage: 'zh-CN',
+      });
+
+      graph.push({
+        '@type': 'Product',
+        '@id': `${absoluteUrl(page.path)}#product`,
+        name: detail.h1,
+        description: detail.intro,
+        image: prod ? absoluteImage(prod.image) : undefined,
+        category: cat?.label,
+        brand: { '@id': businessId },
+        manufacturer: { '@id': businessId },
+      });
+
+      if (detail.faqItems.length > 0) {
+        graph.push({
+          '@type': 'FAQPage',
+          '@id': `${absoluteUrl(page.path)}#faq`,
+          url: absoluteUrl(page.path),
+          name: `${detail.h1}常见问题`,
+          mainEntity: detail.faqItems.map((item) => ({
+            '@type': 'Question',
+            name: item.question,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: item.answer,
+            },
+          })),
+        });
+      }
+    }
+  }
+
   return {
     '@context': 'https://schema.org',
     '@graph': graph,
   };
 }
 
-export function getSitemapXml(lastmod = '2026-06-18') {
+export function getSitemapXml(lastmod = '2026-06-22') {
   const urls = pageRoutes
     .map(
       (page) => `  <url>

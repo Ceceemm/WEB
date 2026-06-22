@@ -103,6 +103,19 @@ npm run preview   # 预览构建结果
 - `http://aqztjx.top/lianxi/index.html`
 - `http://aqztjx.top/wenti/index.html`
 
+产品详情页：
+
+- `http://aqztjx.top/chanpin/luoxuan-zhayouji/index.html`（螺旋榨油机）
+- `http://aqztjx.top/chanpin/yeya-zhayouji/index.html`（液压榨油机）
+- `http://aqztjx.top/chanpin/huasheng-zhayouji/index.html`（花生榨油机）
+- `http://aqztjx.top/chanpin/dadou-zhayouji/index.html`（大豆榨油机）
+- `http://aqztjx.top/chanpin/mikang-zhayouji/index.html`（米糠榨油机）
+- `http://aqztjx.top/chanpin/yuzhaji/index.html`（预榨机）
+- `http://aqztjx.top/chanpin/baitu-zhayouji/index.html`（白土榨油机）
+- `http://aqztjx.top/chanpin/feiyouni-zhayouji/index.html`（废油泥榨油机）
+- `http://aqztjx.top/chanpin/youliao-chaoguo/index.html`（油料炒锅）
+- `http://aqztjx.top/chanpin/meitan-zhuangdaiji/index.html`（煤炭装袋机）
+
 说明：当前 OSS 静态网站规则会把 `/wenti/`、`/chanpin/` 这类目录 URL 回落到首页，因此正式 canonical、站内链接和 sitemap 使用 `.../index.html` 形式，保证搜索引擎和 AI 抓取时拿到独立页面正文。
 
 ## 联系方式

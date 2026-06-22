@@ -118,6 +118,18 @@ npm run preview:static -- 5175
 - `/chanpin/zhuangdai-shebei/index.html`：装袋设备详情。
 - `/lianxi/index.html`：联系方式。
 - `/wenti/index.html`：常见问题。
+- `/chanpin/luoxuan-zhayouji/index.html`：螺旋榨油机详情。
+- `/chanpin/yeya-zhayouji/index.html`：液压榨油机详情。
+- `/chanpin/huasheng-zhayouji/index.html`：花生榨油机详情。
+- `/chanpin/dadou-zhayouji/index.html`：大豆榨油机详情。
+- `/chanpin/mikang-zhayouji/index.html`：米糠榨油机详情。
+- `/chanpin/yuzhaji/index.html`：预榨机详情。
+- `/chanpin/baitu-zhayouji/index.html`：白土榨油机详情。
+- `/chanpin/feiyouni-zhayouji/index.html`：废油泥榨油机详情。
+- `/chanpin/youliao-chaoguo/index.html`：油料炒锅详情。
+- `/chanpin/meitan-zhuangdaiji/index.html`：煤炭装袋机详情。
+
+产品详情页数据在 `app/src/data/pages.ts` 的 `productPageDetails` 中维护，每个页面包含产品介绍、适用场景、选型要点和常见问题（FAQItems）；新增或修改时需同步检查 `pageRoutes`、`ProductDetailPage` 组件、结构化数据和测试。
 
 当前 OSS 静态网站规则会把 `/wenti/`、`/chanpin/` 这类目录 URL 回落到首页，因此正式 canonical、站内链接和 sitemap 使用 `.../index.html` 形式，保证搜索引擎和 AI 抓取时拿到独立页面正文。
 
@@ -149,6 +161,7 @@ npm run preview:static -- 5175
 - `app/src/components/sections/ProductsSection.test.tsx`
 - `app/src/components/common/ImageLightbox.test.tsx`
 - `app/src/data/products.test.ts`
+- `app/src/data/structured-data.test.ts`
 
 测试环境配置：
 
@@ -166,6 +179,7 @@ SEO 信息由 `app/src/data/pages.ts`、`app/src/data/site.ts`、`app/src/data/s
 - 基础 `WebSite`、`LocalBusiness`。
 - 各页 `BreadcrumbList`。
 - 产品页 `CollectionPage`、`ItemList`、对应分类 `Product`。
+- 产品详情页 `WebPage`、`Product`，有可见 FAQ 时附带 `FAQPage`。
 - 联系页 `ContactPage`。
 - FAQ 页 `FAQPage`，只使用页面真实展示的问答。
 
@@ -186,6 +200,7 @@ SEO 信息由 `app/src/data/pages.ts`、`app/src/data/site.ts`、`app/src/data/s
 - 百度普通收录已通过 API 成功提交 `http://aqztjx.top/`；`http://www.aqztjx.top/` 因未作为同一站点验证，百度返回 `not_same_site`，如需推送 `www` 需在百度搜索资源平台单独添加并验证 `www.aqztjx.top`。
 - 百度普通收录已通过 API 成功提交 `http://aqztjx.top/sitemap.xml`；后台 sitemap 表单中可填写同一地址。
 - 2026-06-18 已通过百度普通收录 API 成功提交 8 条正式多页 URL：首页、公司介绍、产品分类、三类设备详情、联系方式、常见问题。
+- 后续如需提交新增的 10 条产品详情页 URL，可使用百度普通收录 API 或提交更新后的 sitemap。
 - 百度推送接口 token、后台账号、短信验证码等信息不得写入前端代码、文档、测试、提交信息或公开仓库。
 
 Bing / IndexNow 协作状态：
