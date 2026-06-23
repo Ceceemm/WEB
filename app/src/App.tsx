@@ -2,14 +2,12 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { getPageByPath } from '@/data/pages';
 import { HomePage } from '@/pages/HomePage';
-import {
-  AboutPage,
-  CategoryPage,
-  ContactPage,
-  FaqPage,
-  ProductDetailPage,
-  ProductsOverviewPage,
-} from '@/pages/StaticPages';
+import { AboutPage } from '@/pages/AboutPage';
+import { CategoryPage } from '@/pages/CategoryPage';
+import { ContactPage } from '@/pages/ContactPage';
+import { FaqPage } from '@/pages/FaqPage';
+import { ProductDetailPage } from '@/pages/ProductDetailPage';
+import { ProductsOverviewPage } from '@/pages/ProductsOverviewPage';
 
 function App({ path }: { path?: string }) {
   const currentPath =
