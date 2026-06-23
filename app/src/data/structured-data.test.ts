@@ -72,7 +72,7 @@ describe('page routes and structured data', () => {
     const sitemap = getSitemapXml();
 
     for (const page of pageRoutes) {
-      expect(sitemap).toContain(`http://aqztjx.top${page.path}`);
+      expect(sitemap).toContain(`https://aqztjx.top${page.path}`);
     }
   });
 
@@ -81,7 +81,7 @@ describe('page routes and structured data', () => {
     const productPaths = Object.values(productPageDetails).map((d) => d.path);
 
     for (const path of productPaths) {
-      expect(sitemap).toContain(`http://aqztjx.top${path}`);
+      expect(sitemap).toContain(`https://aqztjx.top${path}`);
     }
   });
 
@@ -136,13 +136,13 @@ describe('page routes and structured data', () => {
 
     expect(items).toHaveLength(4);
     expect(items?.[0].name).toBe('首页');
-    expect(items?.[0].item).toBe('http://aqztjx.top/');
+    expect(items?.[0].item).toBe('https://aqztjx.top/');
     expect(items?.[1].name).toBe('产品分类');
-    expect(items?.[1].item).toBe('http://aqztjx.top/chanpin/index.html');
+    expect(items?.[1].item).toBe('https://aqztjx.top/chanpin/index.html');
     expect(items?.[2].name).toBe('榨油设备');
-    expect(items?.[2].item).toBe('http://aqztjx.top/chanpin/zhayou-shebei/index.html');
+    expect(items?.[2].item).toBe('https://aqztjx.top/chanpin/zhayou-shebei/index.html');
     expect(items?.[3].name).toBe('螺旋榨油机');
-    expect(items?.[3].item).toBe('http://aqztjx.top/chanpin/luoxuan-zhayouji/index.html');
+    expect(items?.[3].item).toBe('https://aqztjx.top/chanpin/luoxuan-zhayouji/index.html');
   });
 
   it('products overview breadcrumb has exactly 2 levels', () => {
@@ -158,8 +158,8 @@ describe('page routes and structured data', () => {
 
     expect(items).toHaveLength(2);
     expect(items?.[0].name).toBe('首页');
-    expect(items?.[0].item).toBe('http://aqztjx.top/');
+    expect(items?.[0].item).toBe('https://aqztjx.top/');
     expect(items?.[1].name).toBe('产品分类');
-    expect(items?.[1].item).toBe('http://aqztjx.top/chanpin/index.html');
+    expect(items?.[1].item).toBe('https://aqztjx.top/chanpin/index.html');
   });
 });
