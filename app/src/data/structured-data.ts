@@ -34,6 +34,18 @@ function baseGraph(): JsonLdNode[] {
       foundingDate: String(siteInfo.foundingYear),
       description: siteInfo.businessSummary,
       taxID: siteInfo.registrationNumber,
+      priceRange: '按型号询价',
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: 36.4189,
+        longitude: 119.2719,
+      },
+      openingHoursSpecification: {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+        opens: '08:00',
+        closes: '17:30',
+      },
       address: {
         '@type': 'PostalAddress',
         streetAddress: siteInfo.address.text,
@@ -266,7 +278,7 @@ export function getStructuredData(page: PageMeta) {
   };
 }
 
-export function getSitemapXml(lastmod = '2026-06-22') {
+export function getSitemapXml(lastmod = new Date().toISOString().split('T')[0]) {
   const urls = pageRoutes
     .map(
       (page) => `  <url>
