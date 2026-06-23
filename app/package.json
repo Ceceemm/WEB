@@ -16,6 +16,10 @@
     "submit:baidu:dry": "node scripts/submit-baidu.mjs --dry-run",
     "submit:indexnow": "node scripts/submit-indexnow.mjs",
     "submit:indexnow:dry": "node scripts/submit-indexnow.mjs --dry-run",
+    "cert:check": "node scripts/renew-aliyun-free-cert.mjs --check",
+    "cert:renew:dry": "node scripts/renew-aliyun-free-cert.mjs --dry-run",
+    "cert:renew": "node scripts/renew-aliyun-free-cert.mjs",
+    "cert:task:install": "node scripts/install-cert-renew-task.mjs",
     "oss-orphans": "node scripts/oss-orphans.mjs"
   },
   "dependencies": {

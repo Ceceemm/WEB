@@ -45,6 +45,8 @@ Remove-Item "C:\path\to\file.txt"
 - `app/scripts/deploy-oss.mjs`：读取本机 `.ossutilconfig` 并上传 `app/dist` 到阿里云 OSS，不执行删除。
 - `app/scripts/submit-baidu.mjs`：读取 `dist/sitemap.xml` 并向百度普通收录 API 提交正式 HTTPS URL，token 只从环境变量读取。
 - `app/scripts/submit-indexnow.mjs`：读取 `dist/sitemap.xml` 并向 Bing IndexNow 提交正式 URL。
+- `app/scripts/renew-aliyun-free-cert.mjs`：检查或换新阿里云免费个人测试证书，并把新证书部署到 CDN；不删除 OSS 对象，不把私钥写入仓库。
+- `app/scripts/install-cert-renew-task.mjs`：在用户目录生成 Windows 任务计划安装脚本和运行脚本，任务日志写入用户目录。
 - `app/public/images/products/`：产品图片，基本同时提供 `.jpg` 与 `.webp`。
 - `app/src/components/sections/`：页面各业务区块。
 - `app/src/components/common/`：通用组件，如滚动出现、WebP 图片、灯箱、错误边界。
@@ -85,6 +87,7 @@ npm run preview:static -- 5175
 - `D:\soft\node.exe scripts\deploy-oss.mjs` 上传 `app/dist` 到阿里云 OSS；该脚本只执行 PutObject 覆盖/新增，不删除 OSS 对象。
 - `npm run submit:baidu:dry` 预览将提交给百度普通收录的 URL；设置 `BAIDU_PUSH_TOKEN` 后运行 `npm run submit:baidu` 正式提交。
 - `npm run submit:indexnow:dry` 预览将提交给 Bing IndexNow 的 URL；`npm run submit:indexnow` 正式提交。
+- `npm run cert:check` 检查线上 HTTPS 证书与阿里云免费证书额度；`npm run cert:renew:dry` 预演自动换新；`npm run cert:renew` 执行换新；`npm run cert:task:install` 生成 Windows 任务计划安装脚本。
 - 本机 PowerShell 中不要直接依赖 `npm`，优先显式调用 `D:\soft\npm.cmd`，避免命中 `npm.ps1` 执行策略限制。
 - 如果 Codex 内置浏览器提示 `127.0.0.1` 拒绝连接，先用 `Invoke-WebRequest http://127.0.0.1:<端口>/` 验证端口是否真返回 `200`；若 Vite 或 `npm` 后台服务假活或退出，先执行 `D:\soft\npm.cmd run build`，再用 `D:\soft\node.exe scripts/static-preview.mjs <当前浏览器端口>` 直接接管该端口。通过 Codex 启动长期预览服务时，需要批准沙箱外 `Start-Process`，普通沙箱子进程可能在命令结束后被回收。
 
@@ -222,8 +225,12 @@ Bing / IndexNow 协作状态：
 - 阿里云 OSS Bucket 为 `aqztjx-site`，区域为华北2（北京）`oss-cn-beijing`；静态网站托管默认首页和默认 404 页均为 `index.html`，错误文档响应码为 `200`。
 - 当前正式多页 URL 使用 `.../index.html` 形式；不要把 canonical、sitemap 或站内导航改回目录斜杠形式，除非 OSS 静态网站规则已确认能让目录 URL 返回对应子页。
 - 本机 OSS 发布凭据备忘：2026-06-18 已在 RAM 创建程序用户 `aqztjx-site-deploy`，自定义策略 `tpl-aqztjx-site-put-object`，资源范围 `acs:oss:*:*:aqztjx-site/*`，权限仅含 `oss:GetObject` 和 `oss:PutObject`，不含删除权限；当前 Windows 用户环境变量和 `C:\Users\TomatoLaser\.ossutilconfig` 已写入对应凭据，但仓库内不得记录 AccessKey ID、AccessKey Secret 或凭据文件内容。
+- 证书自动换新需要同一 RAM 用户额外具备 `yundun-cert:DescribePackageState`、`yundun-cert:CreateCertificateForPackageRequest`、`yundun-cert:DescribeCertificateState`、`yundun-cert:ListUserCertificateOrder`、`cdn:DescribeCdnDomainCertificateInfo`、`cdn:SetCdnDomainSSLCertificate`。
 - 当前 PATH 未检测到 `ossutil` 或 `ossutil64`；安装 ossutil 后，新开 PowerShell 并用 `ossutil ls oss://aqztjx-site` 验证凭据。
 - 当前正在按阿里云免费证书 + CDN 方案推进 HTTPS；合并部署前需确认 `https://aqztjx.top/`、`robots.txt`、`sitemap.xml` 和百度验证文件均可访问。
+- 阿里云个人测试证书免费版每张有效期 90 天，每个实名认证主体每自然年最多 20 张；不支持续费。自动脚本实现的是到期前重新申请新证书并替换 CDN 证书。
+- `ALIYUN_CERT_REQUEST_DOMAIN` 默认可用 `www.aqztjx.top`，但文件验证要求该域名也能访问 OSS/CDN 验证文件；如只配置主域名 CDN，可设为 `aqztjx.top`。脚本会强制校验证书覆盖 `aqztjx.top`。
+- `ALIYUN_CDN_DOMAINS` 默认只更新 `aqztjx.top`；如需同时更新 `www`，使用逗号分隔的域名列表。`www` 不作为百度主提交站点。
 - 当前项目是纯静态官网，日常运行不需要 ECS、数据库或后端服务器。
 - ICP 备案申请期间曾从阿里云租用一年期轻量应用服务器以满足备案需境内服务器的要求，备案通过后站点切回 OSS 静态托管；该轻量服务器仍在租期内但不再承载网站流量。
 - 修改 ICP 备案号、公安备案号、域名、公司名称、电话、地址时，要同步检查页脚、`app/index.html`、`README.md` 和本文件。

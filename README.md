@@ -90,6 +90,8 @@ npm run check     # lint + test + build
 npm run preview   # 预览构建结果
 npm run submit:baidu:dry    # 检查将提交给百度普通收录的 URL
 npm run submit:indexnow:dry # 检查将提交给 Bing IndexNow 的 URL
+npm run cert:check          # 检查线上 HTTPS 证书和阿里云免费证书额度
+npm run cert:renew:dry      # 预演免费证书自动换新，不申请、不上传、不切 CDN
 ```
 
 生产构建会先完成 Vite 客户端构建，再构建 SSR 入口并预渲染静态多页 HTML。
@@ -141,6 +143,18 @@ ICP备案已通过，当前网站底部展示的备案号为 `鲁ICP备202603163
 - `www.aqztjx.top` 不作为百度主提交站点；如需启用，应单独在搜索资源平台验证。
 - 当前项目为纯静态官网，不需要 ECS、数据库或后端服务器。
 
+HTTPS 与免费证书换新：
+
+- 计划使用阿里云 CDN 作为 HTTPS 入口，源站继续指向现有 OSS 静态网站。
+- 阿里云个人测试证书（免费版）每张有效期 90 天，每个实名认证主体每自然年最多 20 张；到期不支持续费，只能重新申请新证书并替换部署。
+- `D:\soft\npm.cmd run cert:check` 用于检查线上证书和免费证书额度。
+- `D:\soft\npm.cmd run cert:renew:dry` 只预演流程，不申请证书、不上传验证文件、不更新 CDN。
+- `D:\soft\npm.cmd run cert:renew` 会在证书剩余天数低于阈值时申请新免费证书、上传文件验证、签发后切换 CDN 证书。
+- `D:\soft\npm.cmd run cert:task:install` 会在当前用户目录生成 Windows 任务计划安装脚本和运行脚本；任务每周检查一次，日志写入 `C:\Users\TomatoLaser\.aqztjx\cert-renew.log`。
+- 默认只更新 `aqztjx.top` 的 CDN 证书；如需同时更新其他 CDN 域名，可设置环境变量 `ALIYUN_CDN_DOMAINS=aqztjx.top,www.aqztjx.top`。
+- 默认申请域名为 `www.aqztjx.top`，可通过 `ALIYUN_CERT_REQUEST_DOMAIN=aqztjx.top` 改为直接申请主域名；脚本会校验证书必须覆盖 `aqztjx.top`，否则不会部署。
+- 免费证书不保证 OCSP 稳定性，属于低成本方案；CDN 会产生流量费和 HTTPS 请求费，上线前必须配置费用/流量告警。
+
 发布方式：
 
 - 先运行 `D:\soft\npm.cmd run build`。
@@ -156,6 +170,28 @@ ICP备案已通过，当前网站底部展示的备案号为 `鲁ICP备202603163
 - 本机已把凭据写入当前 Windows 用户环境变量，并创建 `C:\Users\TomatoLaser\.ossutilconfig`。
 - 当前 PATH 未检测到 `ossutil` 或 `ossutil64`；安装 ossutil 后，新开 PowerShell 再执行 `ossutil ls oss://aqztjx-site` 验证。
 - AccessKey ID、AccessKey Secret、下载的凭据文件不得写入仓库、文档、测试或提交信息。
+
+证书自动换新还需要给同一 RAM 用户追加最小权限：
+
+```json
+{
+  "Version": "1",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "yundun-cert:DescribePackageState",
+        "yundun-cert:CreateCertificateForPackageRequest",
+        "yundun-cert:DescribeCertificateState",
+        "yundun-cert:ListUserCertificateOrder",
+        "cdn:DescribeCdnDomainCertificateInfo",
+        "cdn:SetCdnDomainSSLCertificate"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
 
 百度搜索资源状态：
 
