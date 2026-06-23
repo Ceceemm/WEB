@@ -32,7 +32,7 @@ export const productCategories: ProductCategory[] = [
     id: 'bagging',
     label: '装袋设备',
     key: 'bagging',
-    description: '煤炭装袋机',
+    description: '煤炭装袋机 · 装车机',
   },
 ];
 
