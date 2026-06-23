@@ -43,6 +43,7 @@ Remove-Item "C:\path\to\file.txt"
 - `app/src/pages/`：首页和新增静态多页内容。
 - `app/scripts/prerender.mjs`：生产构建后生成 `dist/**/index.html`。
 - `app/scripts/deploy-oss.mjs`：读取本机 `.ossutilconfig` 并上传 `app/dist` 到阿里云 OSS，不执行删除。
+- `app/scripts/submit-baidu.mjs`：读取 `dist/sitemap.xml` 并向百度普通收录 API 提交正式 HTTPS URL，token 只从环境变量读取。
 - `app/scripts/submit-indexnow.mjs`：读取 `dist/sitemap.xml` 并向 Bing IndexNow 提交正式 URL。
 - `app/public/images/products/`：产品图片，基本同时提供 `.jpg` 与 `.webp`。
 - `app/src/components/sections/`：页面各业务区块。
@@ -82,6 +83,7 @@ npm run preview:static -- 5175
 - `npm run check` 依次执行 lint、测试、构建，适合作为最终验证。
 - `npm run preview:static -- 端口号` 使用 `app/dist` 启动轻量静态预览，适合 Codex 内置浏览器打不开 Vite 后台服务时使用。
 - `D:\soft\node.exe scripts\deploy-oss.mjs` 上传 `app/dist` 到阿里云 OSS；该脚本只执行 PutObject 覆盖/新增，不删除 OSS 对象。
+- `npm run submit:baidu:dry` 预览将提交给百度普通收录的 URL；设置 `BAIDU_PUSH_TOKEN` 后运行 `npm run submit:baidu` 正式提交。
 - `npm run submit:indexnow:dry` 预览将提交给 Bing IndexNow 的 URL；`npm run submit:indexnow` 正式提交。
 - 本机 PowerShell 中不要直接依赖 `npm`，优先显式调用 `D:\soft\npm.cmd`，避免命中 `npm.ps1` 执行策略限制。
 - 如果 Codex 内置浏览器提示 `127.0.0.1` 拒绝连接，先用 `Invoke-WebRequest http://127.0.0.1:<端口>/` 验证端口是否真返回 `200`；若 Vite 或 `npm` 后台服务假活或退出，先执行 `D:\soft\npm.cmd run build`，再用 `D:\soft\node.exe scripts/static-preview.mjs <当前浏览器端口>` 直接接管该端口。通过 Codex 启动长期预览服务时，需要批准沙箱外 `Start-Process`，普通沙箱子进程可能在命令结束后被回收。
@@ -195,13 +197,13 @@ SEO 信息由 `app/src/data/pages.ts`、`app/src/data/site.ts`、`app/src/data/s
 
 百度搜索资源平台当前状态：
 
-- 2026-06-18 已完成 `aqztjx.top` 站点验证，验证文件为 `app/public/baidu_verify_codeva-hNgqSnR0KO.html`，线上访问地址为 `http://aqztjx.top/baidu_verify_codeva-hNgqSnR0KO.html`。
-- 2026-06-18 已新增并上线 `app/public/sitemap.xml` 与 `app/public/robots.txt`，线上地址分别为 `http://aqztjx.top/sitemap.xml` 和 `http://aqztjx.top/robots.txt`。
+- 2026-06-18 已完成 `aqztjx.top` HTTP 站点验证，验证文件为 `app/public/baidu_verify_codeva-hNgqSnR0KO.html`，HTTPS 上线后需确认 `https://aqztjx.top/baidu_verify_codeva-hNgqSnR0KO.html` 可访问并在百度搜索资源平台新增/验证 HTTPS 站点。
+- 2026-06-18 已新增并上线 `sitemap.xml` 与 `robots.txt`；HTTPS 上线后百度后台 sitemap 应填写 `https://aqztjx.top/sitemap.xml`。
 - 百度普通收录已通过 API 成功提交 `http://aqztjx.top/`；`http://www.aqztjx.top/` 因未作为同一站点验证，百度返回 `not_same_site`，如需推送 `www` 需在百度搜索资源平台单独添加并验证 `www.aqztjx.top`。
-- 百度普通收录已通过 API 成功提交 `http://aqztjx.top/sitemap.xml`；后台 sitemap 表单中可填写同一地址。
+- 百度普通收录已通过 API 成功提交过 HTTP sitemap；HTTPS 上线后改用 `npm run submit:baidu:dry` 与 `npm run submit:baidu` 提交 HTTPS sitemap URL 列表。
 - 2026-06-18 已通过百度普通收录 API 成功提交 8 条正式多页 URL：首页、公司介绍、产品分类、三类设备详情、联系方式、常见问题。
 - 后续如需提交新增的 10 条产品详情页 URL，可使用百度普通收录 API 或提交更新后的 sitemap。
-- 百度推送接口 token、后台账号、短信验证码等信息不得写入前端代码、文档、测试、提交信息或公开仓库。
+- 百度推送接口 token、后台账号、短信验证码等信息不得写入前端代码、文档、测试、提交信息或公开仓库；提交脚本只允许从环境变量 `BAIDU_PUSH_TOKEN` 读取 token。
 
 Bing / IndexNow 协作状态：
 
@@ -216,12 +218,12 @@ Bing / IndexNow 协作状态：
 ## 备案与上线维护
 
 - ICP 备案号当前为 `鲁ICP备2026031639号`，展示位置在 `app/src/components/layout/Footer.tsx`，链接应指向 `https://beian.miit.gov.cn/#/Integrated/index`。
-- 官网域名当前为 `aqztjx.top`，正式访问方式为阿里云 OSS 直连：`http://aqztjx.top/` 和 `http://www.aqztjx.top/`。
+- 官网域名当前为 `aqztjx.top`，当前分支代码层正式 URL 使用 `https://aqztjx.top/`；线上 HTTPS 生效依赖阿里云 CDN/证书配置发布。
 - 阿里云 OSS Bucket 为 `aqztjx-site`，区域为华北2（北京）`oss-cn-beijing`；静态网站托管默认首页和默认 404 页均为 `index.html`，错误文档响应码为 `200`。
 - 当前正式多页 URL 使用 `.../index.html` 形式；不要把 canonical、sitemap 或站内导航改回目录斜杠形式，除非 OSS 静态网站规则已确认能让目录 URL 返回对应子页。
 - 本机 OSS 发布凭据备忘：2026-06-18 已在 RAM 创建程序用户 `aqztjx-site-deploy`，自定义策略 `tpl-aqztjx-site-put-object`，资源范围 `acs:oss:*:*:aqztjx-site/*`，权限仅含 `oss:GetObject` 和 `oss:PutObject`，不含删除权限；当前 Windows 用户环境变量和 `C:\Users\TomatoLaser\.ossutilconfig` 已写入对应凭据，但仓库内不得记录 AccessKey ID、AccessKey Secret 或凭据文件内容。
 - 当前 PATH 未检测到 `ossutil` 或 `ossutil64`；安装 ossutil 后，新开 PowerShell 并用 `ossutil ls oss://aqztjx-site` 验证凭据。
-- 当前暂不开通 CDN，HTTPS 也暂未配置；不要把 `app/index.html` 的 canonical、Open Graph URL 和结构化数据 URL 改成 `https://`，除非 HTTPS 已在阿里云侧验证可用。
+- 当前正在按阿里云免费证书 + CDN 方案推进 HTTPS；合并部署前需确认 `https://aqztjx.top/`、`robots.txt`、`sitemap.xml` 和百度验证文件均可访问。
 - 当前项目是纯静态官网，日常运行不需要 ECS、数据库或后端服务器。
 - ICP 备案申请期间曾从阿里云租用一年期轻量应用服务器以满足备案需境内服务器的要求，备案通过后站点切回 OSS 静态托管；该轻量服务器仍在租期内但不再承载网站流量。
 - 修改 ICP 备案号、公安备案号、域名、公司名称、电话、地址时，要同步检查页脚、`app/index.html`、`README.md` 和本文件。

@@ -12,6 +12,8 @@
     "check": "npm run lint && npm run test:run && npm run build",
     "preview": "vite preview",
     "preview:static": "node scripts/static-preview.mjs",
+    "submit:baidu": "node scripts/submit-baidu.mjs",
+    "submit:baidu:dry": "node scripts/submit-baidu.mjs --dry-run",
     "submit:indexnow": "node scripts/submit-indexnow.mjs",
     "submit:indexnow:dry": "node scripts/submit-indexnow.mjs --dry-run",
     "oss-orphans": "node scripts/oss-orphans.mjs"

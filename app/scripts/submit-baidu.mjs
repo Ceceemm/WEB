@@ -5,12 +5,11 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const appDir = path.resolve(__dirname, '..');
 const distDir = path.join(appDir, 'dist');
-const publicDir = path.join(appDir, 'public');
 
 const host = 'aqztjx.top';
 const siteUrl = `https://${host}`;
-const keyFileName = 'b00aa3db8702439f8eab75fdb067f3c4.txt';
-const endpoint = 'https://www.bing.com/indexnow';
+const token = process.env.BAIDU_PUSH_TOKEN;
+const endpoint = process.env.BAIDU_PUSH_ENDPOINT ?? 'http://data.zz.baidu.com/urls';
 const dryRun = process.argv.includes('--dry-run');
 
 function extractSitemapUrls(xml) {
@@ -24,40 +23,50 @@ function assertProjectUrl(url) {
   }
 }
 
-const [key, sitemapXml] = await Promise.all([
-  readFile(path.join(publicDir, keyFileName), 'utf8').then((text) => text.trim()),
-  readFile(path.join(distDir, 'sitemap.xml'), 'utf8'),
-]);
-
+const sitemapXml = await readFile(path.join(distDir, 'sitemap.xml'), 'utf8');
 const urlList = extractSitemapUrls(sitemapXml);
+
 if (urlList.length === 0) {
   throw new Error('No URLs found in dist/sitemap.xml. Run npm run build first.');
 }
+
 urlList.forEach(assertProjectUrl);
 
-const payload = {
-  host,
-  key,
-  keyLocation: `${siteUrl}/${keyFileName}`,
-  urlList,
-};
-
 if (dryRun) {
-  console.log(JSON.stringify(payload, null, 2));
+  console.log(`Baidu push dry run for ${siteUrl}:`);
+  for (const url of urlList) {
+    console.log(url);
+  }
   process.exit(0);
 }
 
-const response = await fetch(endpoint, {
+if (!token) {
+  throw new Error('Missing BAIDU_PUSH_TOKEN environment variable.');
+}
+
+const submitUrl = new URL(endpoint);
+submitUrl.searchParams.set('site', siteUrl);
+submitUrl.searchParams.set('token', token);
+
+const response = await fetch(submitUrl, {
   method: 'POST',
-  headers: { 'Content-Type': 'application/json; charset=utf-8' },
-  body: JSON.stringify(payload),
+  headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+  body: urlList.join('\n'),
 });
 
 const responseText = await response.text();
 if (!response.ok) {
   throw new Error(
-    `IndexNow submission failed: HTTP ${response.status}${responseText ? ` ${responseText}` : ''}`,
+    `Baidu submission failed: HTTP ${response.status}${responseText ? ` ${responseText}` : ''}`,
   );
 }
 
-console.log(`IndexNow submitted ${urlList.length} URLs to Bing.`);
+let result;
+try {
+  result = JSON.parse(responseText);
+} catch {
+  result = responseText;
+}
+
+console.log('Baidu submission result:');
+console.log(JSON.stringify(result, null, 2));
