@@ -1,3 +1,4 @@
+import { AppErrorBoundary } from '@/components/common/AppErrorBoundary';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { getPageByPath } from '@/data/pages';
@@ -28,11 +29,13 @@ function App({ path }: { path?: string }) {
   })();
 
   return (
-    <div className="min-h-screen bg-forge-paper text-forge-warm-text font-body">
-      <Navbar initialTheme={page.kind === 'home' ? 'light' : 'dark'} />
-      <main>{pageContent}</main>
-      <Footer />
-    </div>
+    <AppErrorBoundary>
+      <div className="min-h-screen bg-forge-paper text-forge-warm-text font-body">
+        <Navbar initialTheme={page.kind === 'home' ? 'light' : 'dark'} />
+        <main>{pageContent}</main>
+        <Footer />
+      </div>
+    </AppErrorBoundary>
   );
 }
 
