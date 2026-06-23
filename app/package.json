@@ -13,7 +13,8 @@
     "preview": "vite preview",
     "preview:static": "node scripts/static-preview.mjs",
     "submit:indexnow": "node scripts/submit-indexnow.mjs",
-    "submit:indexnow:dry": "node scripts/submit-indexnow.mjs --dry-run"
+    "submit:indexnow:dry": "node scripts/submit-indexnow.mjs --dry-run",
+    "oss-orphans": "node scripts/oss-orphans.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.562.0",
