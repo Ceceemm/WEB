@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Wrench } from 'lucide-react';
+import { ImageLightbox } from '@/components/common/ImageLightbox';
 import { WebpImage } from '@/components/common/WebpImage';
 import { categoryDetails, getCategoryProducts, getProductPageDetail } from '@/data/pages';
 import { productCategories } from '@/data/products';
@@ -9,6 +11,7 @@ export function CategoryPage({ categoryKey }: { categoryKey: ProductCategory['ke
   const detail = categoryDetails[categoryKey];
   const category = productCategories.find((item) => item.key === categoryKey);
   const categoryProducts = getCategoryProducts(categoryKey);
+  const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
 
   return (
     <>
@@ -39,11 +42,9 @@ export function CategoryPage({ categoryKey }: { categoryKey: ProductCategory['ke
           {categoryProducts.map((product) => {
             const productDetail = getProductPageDetail(product.id);
             const hasDetailPage = !!productDetail;
-            const CardWrapper = hasDetailPage ? 'a' : 'div';
-            const cardProps = hasDetailPage ? { href: productDetail.path } : {};
 
-            return (
-              <CardWrapper key={product.id} {...cardProps} className={hasDetailPage ? 'bg-forge-surface block group transition-colors hover:bg-forge-paper' : 'bg-forge-surface'}>
+            const cardInner = (
+              <>
                 <div className="aspect-[4/3] bg-forge-warm-border/40">
                   <WebpImage
                     src={product.image}
@@ -53,18 +54,50 @@ export function CategoryPage({ categoryKey }: { categoryKey: ProductCategory['ke
                   />
                 </div>
                 <div className="min-h-[130px] p-4 md:min-h-[150px] md:p-5">
-                  <h2 className={`font-display text-lg font-black md:text-xl ${hasDetailPage ? 'text-forge-warm-text group-hover:text-forge-orange transition-colors' : 'text-forge-warm-text'}`}>
+                  <h2 className="font-display text-lg font-black text-forge-warm-text transition-colors group-hover:text-forge-orange md:text-xl">
                     {product.name}
                   </h2>
                   <p className="mt-3 text-sm leading-7 text-forge-warm-muted">
                     {product.description}
                   </p>
                 </div>
-              </CardWrapper>
+              </>
+            );
+
+            if (hasDetailPage) {
+              return (
+                <a
+                  key={product.id}
+                  href={productDetail.path}
+                  className="group block bg-forge-surface transition-colors hover:bg-forge-paper"
+                >
+                  {cardInner}
+                </a>
+              );
+            }
+
+            return (
+              <button
+                key={product.id}
+                type="button"
+                onClick={() => setLightbox({ src: product.image, alt: product.name })}
+                className="group block w-full cursor-pointer bg-forge-surface text-left transition-colors hover:bg-forge-paper"
+                aria-label={`${product.name} 查看大图`}
+              >
+                {cardInner}
+              </button>
             );
           })}
         </div>
       </TextBand>
+      {lightbox && (
+        <ImageLightbox
+          src={lightbox.src}
+          alt={lightbox.alt}
+          open={true}
+          onClose={() => setLightbox(null)}
+        />
+      )}
     </>
   );
 }

@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { ScrollReveal } from '@/components/common/ScrollReveal';
 import { WebpImage } from '@/components/common/WebpImage';
+import { ImageLightbox } from '@/components/common/ImageLightbox';
 import { productCategories, products, type Product, type ProductCategory } from '@/data/products';
-import { ArrowUpRight } from 'lucide-react';
+import { ZoomIn } from 'lucide-react';
 
 const hiddenProductSeriesIds = new Set(['p15', 'p19', 'p20', 'p21', 'p22', 'p25', 'p26']);
 
 export function ProductsSection() {
   const [activeCategory, setActiveCategory] = useState<ProductCategory['key']>('oil-press');
+  const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
 
   const currentCategory =
     productCategories.find((c) => c.key === activeCategory) ?? productCategories[0];
@@ -87,22 +89,45 @@ export function ProductsSection() {
         >
           {categoryProducts.map((product, index) => (
             <ScrollReveal key={product.id} delay={index * 80}>
-              <ProductCard product={product} />
+              <ProductCard
+                product={product}
+                onImageClick={() => setLightbox({ src: product.image, alt: product.name })}
+              />
             </ScrollReveal>
           ))}
         </div>
       </div>
+
+      {lightbox && (
+        <ImageLightbox
+          src={lightbox.src}
+          alt={lightbox.alt}
+          open={true}
+          onClose={() => setLightbox(null)}
+        />
+      )}
     </section>
   );
 }
 
-function ProductCard({ product }: { product: Product }) {
+function ProductCard({
+  product,
+  onImageClick,
+}: {
+  product: Product;
+  onImageClick: () => void;
+}) {
   const [imgError, setImgError] = useState(false);
 
   return (
     <article className="group relative bg-forge-surface overflow-hidden transition-colors duration-300 hover:bg-forge-paper">
-      {/* Image container */}
-      <div className="aspect-[4/3] bg-forge-warm-border/40 overflow-hidden">
+      {/* Image container - clickable for lightbox */}
+      <button
+        type="button"
+        onClick={onImageClick}
+        className="aspect-[4/3] block w-full bg-forge-warm-border/40 overflow-hidden cursor-zoom-in"
+        aria-label={`${product.name} 查看大图`}
+      >
         {imgError ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-forge-warm-muted/60 font-display text-sm">{product.name}</p>
@@ -117,7 +142,7 @@ function ProductCard({ product }: { product: Product }) {
             onError={() => setImgError(true)}
           />
         )}
-      </div>
+      </button>
 
       {/* Info */}
       <div className="min-h-[140px] p-4 md:min-h-[154px] md:p-5">
@@ -125,7 +150,7 @@ function ProductCard({ product }: { product: Product }) {
           <h3 className="font-display font-black text-lg text-forge-warm-text group-hover:text-forge-orange transition-colors md:text-xl">
             {product.name}
           </h3>
-          <ArrowUpRight size={18} className="mt-1 shrink-0 text-forge-warm-muted group-hover:text-forge-orange" aria-hidden="true" />
+          <ZoomIn size={18} className="mt-1 shrink-0 text-forge-warm-muted group-hover:text-forge-orange" aria-hidden="true" />
         </div>
         <p className="mt-3 text-forge-warm-muted text-sm leading-7">
           {product.description}
