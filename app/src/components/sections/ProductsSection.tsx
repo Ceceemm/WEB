@@ -3,6 +3,7 @@ import { ScrollReveal } from '@/components/common/ScrollReveal';
 import { WebpImage } from '@/components/common/WebpImage';
 import { ImageLightbox } from '@/components/common/ImageLightbox';
 import { productCategories, products, type Product, type ProductCategory } from '@/data/products';
+import { siteInfo } from '@/data/site';
 import { ZoomIn } from 'lucide-react';
 
 const hiddenProductSeriesIds = new Set(['p15', 'p19', 'p20', 'p21', 'p22', 'p25', 'p26']);
@@ -77,6 +78,21 @@ export function ProductsSection() {
           <p className="mb-8 text-sm font-semibold text-forge-orange">
             {currentCategory.description}
           </p>
+        </ScrollReveal>
+
+        {/* Business scope notice - feed/farm equipment by inquiry */}
+        <ScrollReveal delay={200}>
+          <div className="mb-10 flex flex-col gap-3 border border-forge-warm-border bg-forge-surface p-4 text-sm text-forge-warm-muted sm:flex-row sm:items-center sm:justify-between md:p-5">
+            <p>
+              线上重点展示油脂加工与装袋设备，饲料生产与农田装备欢迎来电咨询。
+            </p>
+            <a
+              href={`tel:${siteInfo.phone}`}
+              className="inline-flex shrink-0 items-center gap-1 font-semibold text-forge-orange transition-colors hover:text-forge-orange/80"
+            >
+              致电 {siteInfo.phone}
+            </a>
+          </div>
         </ScrollReveal>
 
         {/* Product Grid */}
