@@ -13,6 +13,7 @@ const bucket = 'aqztjx-site';
 const ossEndpoint = 'oss-cn-beijing.aliyuncs.com';
 const ossHost = `${bucket}.${ossEndpoint}`;
 const productCode = 'digicert-free-1-free';
+const freeCertificateAnnualQuota = 20;
 const primaryDomain = process.env.ALIYUN_CERT_PRIMARY_DOMAIN ?? 'aqztjx.top';
 const requestDomain = process.env.ALIYUN_CERT_REQUEST_DOMAIN ?? `www.${primaryDomain}`;
 const cdnDomains = (process.env.ALIYUN_CDN_DOMAINS ?? primaryDomain)
@@ -209,11 +210,11 @@ async function describePackageRequired(credentials) {
 
 function assertPackageQuota(packageState) {
   if (!packageState) return;
-  const remaining = Number(packageState.TotalCount ?? 0) - Number(packageState.UsedCount ?? 0);
+  const total = Number(packageState.TotalCount ?? freeCertificateAnnualQuota);
+  const used = Number(packageState.UsedCount ?? packageState.IssuedCount ?? 0);
+  const remaining = total - used;
   if (remaining <= 0) {
-    throw new Error(
-      `No free certificate quota left for ${productCode}. Total=${packageState.TotalCount}, Used=${packageState.UsedCount}.`,
-    );
+    throw new Error(`No free certificate quota left for ${productCode}. Total=${total}, Used=${used}.`);
   }
 }
 
@@ -341,8 +342,10 @@ async function checkMode(credentials) {
 
   const packageState = await describePackageIfPossible(credentials);
   if (packageState) {
-    const remaining = Number(packageState.TotalCount ?? 0) - Number(packageState.UsedCount ?? 0);
-    console.log(`Free certificate quota: ${remaining}/${packageState.TotalCount} remaining (${productCode}).`);
+    const total = Number(packageState.TotalCount ?? freeCertificateAnnualQuota);
+    const used = Number(packageState.UsedCount ?? packageState.IssuedCount ?? 0);
+    const remaining = total - used;
+    console.log(`Free certificate quota: ${remaining}/${total} remaining (${productCode}).`);
   } else {
     console.log('Aliyun quota/API checks were skipped.');
   }
