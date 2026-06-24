@@ -12,7 +12,8 @@ const runnerPath = path.join(logDir, 'run-cert-renew.ps1');
 
 await mkdir(logDir, { recursive: true });
 
-const runner = `Set-Location "${appDir}"
+const runner = `$env:ALIYUN_CDN_DOMAINS = "aqztjx.top,www.aqztjx.top"
+Set-Location "${appDir}"
 & "D:\\soft\\npm.cmd" run cert:renew *>> "${logPath}"
 `;
 
