@@ -8,6 +8,7 @@ const distDir = path.join(appDir, 'dist');
 
 const host = 'aqztjx.top';
 const siteUrl = `https://${host}`;
+const baiduSite = host;
 const token = process.env.BAIDU_PUSH_TOKEN;
 const endpoint = process.env.BAIDU_PUSH_ENDPOINT ?? 'http://data.zz.baidu.com/urls';
 const dryRun = process.argv.includes('--dry-run');
@@ -45,7 +46,7 @@ if (!token) {
 }
 
 const submitUrl = new URL(endpoint);
-submitUrl.searchParams.set('site', siteUrl);
+submitUrl.searchParams.set('site', baiduSite);
 submitUrl.searchParams.set('token', token);
 
 const response = await fetch(submitUrl, {
