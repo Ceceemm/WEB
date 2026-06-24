@@ -16,7 +16,7 @@ const runner = `Set-Location "${appDir}"
 & "D:\\soft\\npm.cmd" run cert:renew *>> "${logPath}"
 `;
 
-const powershell = `$Action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -File \\"${runnerPath}\\"" -WorkingDirectory "${appDir}"
+const powershell = `$Action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument '-NoProfile -ExecutionPolicy Bypass -File "${runnerPath}"' -WorkingDirectory "${appDir}"
 $Trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday -At 09:15
 $Settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 1) -MultipleInstances IgnoreNew
 Register-ScheduledTask -TaskName "${taskName}" -Action $Action -Trigger $Trigger -Settings $Settings -Description "Renew aqztjx.top Alibaba Cloud free HTTPS certificate when it is near expiry." -Force
