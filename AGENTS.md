@@ -84,7 +84,7 @@ npm run preview:static -- 5175
 - `npm run build` 先执行 TypeScript 构建检查，再执行 Vite 客户端构建、SSR 入口构建和静态多页预渲染。
 - `npm run check` 依次执行 lint、测试、构建，适合作为最终验证。
 - `npm run preview:static -- 端口号` 使用 `app/dist` 启动轻量静态预览，适合 Codex 内置浏览器打不开 Vite 后台服务时使用。
-- `D:\soft\node.exe scripts\deploy-oss.mjs` 通过 HTTPS 上传 `app/dist` 到阿里云 OSS；该脚本只执行带 `Content-MD5` 的 PutObject 覆盖/新增，不删除 OSS 对象。
+- `D:\soft\node.exe scripts\deploy-oss.mjs` 通过 HTTPS 上传 `app/dist` 到阿里云 OSS；该脚本只执行带 `Content-MD5` 的 PutObject 覆盖/新增，不删除 OSS 对象，并尝试设置 `404.html`/404 网站规则。若 RAM 用户没有 `oss:PutBucketWebsite`，上传仍完成但会明确告警，需在控制台或补充最小权限后单独设置规则。
 - `npm run submit:baidu:dry` 预览将提交给百度普通收录的 URL；设置 `BAIDU_PUSH_TOKEN` 后运行 `npm run submit:baidu` 正式提交。
 - `npm run submit:indexnow:dry` 预览将提交给 Bing IndexNow 的 URL；`npm run submit:indexnow` 正式提交。
 - `npm run cert:check` 检查线上 HTTPS 证书与阿里云免费证书额度；`npm run cert:renew:dry` 预演自动换新；`npm run cert:renew` 执行换新；`npm run cert:task:install` 生成 Windows 任务计划安装脚本。

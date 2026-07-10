@@ -121,6 +121,53 @@ async function putObject({ accessKeyID, accessKeySecret, stsToken }, filePath, o
   return key;
 }
 
+async function configureWebsite({ accessKeyID, accessKeySecret, stsToken }) {
+  const contentType = 'application/xml';
+  const content = Buffer.from(
+    '<WebsiteConfiguration><IndexDocument><Suffix>index.html</Suffix></IndexDocument><ErrorDocument><Key>404.html</Key><HttpStatus>404</HttpStatus></ErrorDocument></WebsiteConfiguration>',
+    'utf8',
+  );
+  const contentMd5 = createHash('md5').update(content).digest('base64');
+  const date = new Date().toUTCString();
+  const ossHeaders = stsToken ? { 'x-oss-security-token': stsToken } : {};
+  const canonicalHeaders = Object.entries(ossHeaders)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([name, value]) => `${name}:${value}\n`)
+    .join('');
+  const resource = `/${bucket}/?website`;
+  const stringToSign = ['PUT', contentMd5, contentType, date, `${canonicalHeaders}${resource}`].join('\n');
+  const signature = createHmac('sha1', accessKeySecret).update(stringToSign).digest('base64');
+  await new Promise((resolve, reject) => {
+    const request = https.request({
+      method: 'PUT',
+      host,
+      path: '/?website',
+      headers: {
+        Authorization: `OSS ${accessKeyID}:${signature}`,
+        Date: date,
+        Host: host,
+        'Content-Type': contentType,
+        'Content-Length': content.length,
+        'Content-MD5': contentMd5,
+        ...ossHeaders,
+      },
+    }, (response) => {
+      response.resume();
+      response.on('end', () => {
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+          resolve();
+          return;
+        }
+        reject(new Error(`OSS website configuration failed: HTTP ${response.statusCode}`));
+      });
+    });
+    request.setTimeout(30000, () => request.destroy(new Error('OSS website configuration timed out')));
+    request.on('error', reject);
+    request.end(content);
+  });
+  console.log('OSS website configured: index.html / 404.html (404)');
+}
+
 const configText = await readFile(configPath, 'utf8');
 const config = parseConfig(configText);
 if (!config.accessKeyID || !config.accessKeySecret) {
@@ -146,3 +193,9 @@ for (const file of files) {
   }
 }
 console.log(`OSS deploy complete: ${uploadedKeys.length} objects from ${files.length} files`);
+try {
+  await configureWebsite(config);
+} catch (error) {
+  console.warn(`OSS website rule was not updated: ${error.message}`);
+  console.warn('Grant oss:PutBucketWebsite to the deploy identity, then rerun this command or configure 404.html/404 in the OSS console.');
+}
