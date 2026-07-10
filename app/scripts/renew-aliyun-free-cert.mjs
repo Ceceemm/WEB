@@ -1,6 +1,5 @@
-import { createHmac, randomUUID, X509Certificate } from 'node:crypto';
+import { createHash, createHmac, randomUUID, X509Certificate } from 'node:crypto';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import http from 'node:http';
 import https from 'node:https';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -222,6 +221,7 @@ async function putOssTextObject({ credentials, key, content }) {
   const date = new Date().toUTCString();
   const contentType = 'text/plain; charset=utf-8';
   const contentBuffer = Buffer.from(content, 'utf8');
+  const contentMd5 = createHash('md5').update(contentBuffer).digest('base64');
   const ossHeaders = {
     'x-oss-object-acl': 'public-read',
     'x-oss-storage-class': 'Standard',
@@ -232,7 +232,7 @@ async function putOssTextObject({ credentials, key, content }) {
     .map(([name, value]) => `${name}:${value}\n`)
     .join('');
   const resource = `/${bucket}/${key}`;
-  const stringToSign = ['PUT', '', contentType, date, `${canonicalHeaders}${resource}`].join('\n');
+  const stringToSign = ['PUT', contentMd5, contentType, date, `${canonicalHeaders}${resource}`].join('\n');
   const signature = createHmac('sha1', credentials.accessKeySecret).update(stringToSign).digest('base64');
 
   const headers = {
@@ -241,12 +241,13 @@ async function putOssTextObject({ credentials, key, content }) {
     Host: ossHost,
     'Content-Type': contentType,
     'Content-Length': contentBuffer.length,
+    'Content-MD5': contentMd5,
     'Cache-Control': 'no-cache',
     ...ossHeaders,
   };
 
   await new Promise((resolve, reject) => {
-    const request = http.request(
+    const request = https.request(
       {
         method: 'PUT',
         host: ossHost,
@@ -265,6 +266,7 @@ async function putOssTextObject({ credentials, key, content }) {
       },
     );
     request.on('error', reject);
+    request.setTimeout(30_000, () => request.destroy(new Error(`OSS upload timed out: ${key}`)));
     request.end(contentBuffer);
   });
 }

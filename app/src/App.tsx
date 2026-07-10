@@ -9,6 +9,7 @@ import { ContactPage } from '@/pages/ContactPage';
 import { FaqPage } from '@/pages/FaqPage';
 import { ProductDetailPage } from '@/pages/ProductDetailPage';
 import { ProductsOverviewPage } from '@/pages/ProductsOverviewPage';
+import { NotFoundPage } from '@/pages/NotFoundPage';
 
 function App({ path }: { path?: string }) {
   const currentPath =
@@ -25,14 +26,15 @@ function App({ path }: { path?: string }) {
     if (page.kind === 'contact') return <ContactPage />;
     if (page.kind === 'faq') return <FaqPage />;
     if (page.kind === 'product') return <ProductDetailPage path={page.path} />;
-    return <HomePage />;
+    return <NotFoundPage />;
   })();
 
   return (
     <AppErrorBoundary>
       <div className="min-h-screen bg-forge-paper text-forge-warm-text font-body">
         <Navbar initialTheme={page.kind === 'home' ? 'light' : 'dark'} />
-        <main>{pageContent}</main>
+        <a className="skip-link" href="#main-content">跳到主要内容</a>
+        <main id="main-content" tabIndex={-1}>{pageContent}</main>
         <Footer />
       </div>
     </AppErrorBoundary>

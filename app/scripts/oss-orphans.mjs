@@ -16,7 +16,7 @@
 
 import { createHmac } from 'node:crypto';
 import { readdir, readFile } from 'node:fs/promises';
-import http from 'node:http';
+import https from 'node:https';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -84,7 +84,14 @@ async function listOssObjects(credentials) {
   while (true) {
     const date = new Date().toUTCString();
     const resource = `/${bucket}/`;
-    const stringToSign = ['GET', '', '', date, resource].join('\n');
+    const ossHeaders = credentials.stsToken
+      ? { 'x-oss-security-token': credentials.stsToken }
+      : {};
+    const canonicalHeaders = Object.entries(ossHeaders)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([name, value]) => `${name}:${value}\n`)
+      .join('');
+    const stringToSign = ['GET', '', '', date, `${canonicalHeaders}${resource}`].join('\n');
     const signature = createHmac('sha1', credentials.accessKeySecret)
       .update(stringToSign)
       .digest('base64');
@@ -94,7 +101,7 @@ async function listOssObjects(credentials) {
       : '?max-keys=1000';
 
     const response = await new Promise((resolve, reject) => {
-      const req = http.request(
+      const req = https.request(
         {
           method: 'GET',
           host,
@@ -103,6 +110,7 @@ async function listOssObjects(credentials) {
             Authorization: `OSS ${credentials.accessKeyID}:${signature}`,
             Date: date,
             Host: host,
+            ...ossHeaders,
           },
         },
         (res) => {
@@ -111,6 +119,7 @@ async function listOssObjects(credentials) {
           res.on('end', () => resolve({ statusCode: res.statusCode, body }));
         }
       );
+      req.setTimeout(30000, () => req.destroy(new Error('OSS object listing timed out')));
       req.on('error', reject);
       req.end();
     });

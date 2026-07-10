@@ -25,7 +25,17 @@ createServer((request, response) => {
   }
 
   if (!existsSync(filePath)) {
-    filePath = join(root, 'index.html');
+    const notFoundPath = join(root, '404.html');
+    response.statusCode = 404;
+    response.setHeader('Cache-Control', 'no-store');
+    if (existsSync(notFoundPath)) {
+      response.setHeader('Content-Type', 'text/html; charset=utf-8');
+      createReadStream(notFoundPath).pipe(response);
+      return;
+    }
+    response.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    response.end('404 Not Found');
+    return;
   }
 
   response.setHeader('Content-Type', types[extname(filePath)] ?? 'application/octet-stream');

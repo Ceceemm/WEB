@@ -1,4 +1,4 @@
-import { categoryDetails, getCategoryProducts, getProductPageDetailByPath, pageRoutes, type PageMeta } from './pages';
+import { categoryDetails, getCategoryProducts, getProductPageDetail, getProductPageDetailByPath, pageRoutes, type PageMeta } from './pages';
 import { productCategories, products } from './products';
 import { faqItems, siteInfo } from './site';
 
@@ -35,17 +35,6 @@ function baseGraph(): JsonLdNode[] {
       description: siteInfo.businessSummary,
       taxID: siteInfo.registrationNumber,
       priceRange: '按型号询价',
-      geo: {
-        '@type': 'GeoCoordinates',
-        latitude: 36.4189,
-        longitude: 119.2719,
-      },
-      openingHoursSpecification: {
-        '@type': 'OpeningHoursSpecification',
-        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-        opens: '08:00',
-        closes: '17:30',
-      },
       address: {
         '@type': 'PostalAddress',
         streetAddress: siteInfo.address.text,
@@ -148,20 +137,25 @@ function productsGraph(page: PageMeta): JsonLdNode[] {
     {
       '@type': 'ItemList',
       '@id': `${absoluteUrl(page.path)}#products`,
-      itemListElement: categoryProducts.map((product, index) => ({
-        '@type': 'ListItem',
-        position: index + 1,
-        item: {
-          '@type': 'Product',
-          '@id': `${absoluteUrl(page.path)}#${product.id}`,
-          name: product.name,
-          description: product.description,
-          image: absoluteImage(product.image),
-          category: productCategories.find((category) => category.key === product.category)?.label,
-          brand: { '@id': businessId },
-          manufacturer: { '@id': businessId },
-        },
-      })),
+      itemListElement: categoryProducts.map((product, index) => {
+        const detail = getProductPageDetail(product.id);
+        const productUrl = detail ? absoluteUrl(detail.path) : absoluteUrl(page.path);
+        return {
+          '@type': 'ListItem',
+          position: index + 1,
+          item: {
+            '@type': 'Product',
+            '@id': `${productUrl}#product`,
+            url: productUrl,
+            name: product.name,
+            description: product.description,
+            image: absoluteImage(product.image),
+            category: productCategories.find((category) => category.key === product.category)?.label,
+            brand: { '@id': businessId },
+            manufacturer: { '@id': businessId },
+          },
+        };
+      }),
     },
   ];
 }
@@ -278,14 +272,11 @@ export function getStructuredData(page: PageMeta) {
   };
 }
 
-export function getSitemapXml(lastmod = new Date().toISOString().split('T')[0]) {
+export function getSitemapXml() {
   const urls = pageRoutes
     .map(
       (page) => `  <url>
     <loc>${absoluteUrl(page.path)}</loc>
-    <lastmod>${lastmod}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
   </url>`,
     )
     .join('\n');
@@ -299,18 +290,29 @@ ${urls}
 
 export function getHeadHtml(page: PageMeta) {
   const url = absoluteUrl(page.path);
-  const json = JSON.stringify(getStructuredData(page), null, 2);
+  const escapeHtml = (value: string) => value.replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  })[character] ?? character);
+  const json = JSON.stringify(getStructuredData(page), null, 2)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026');
+  const escapedTitle = escapeHtml(page.title);
+  const escapedDescription = escapeHtml(page.description);
+  const isIndexable = page.indexable !== false;
 
   return [
-    `<title>${page.title}</title>`,
-    `<meta name="description" content="${page.description}" />`,
-    `<link rel="canonical" href="${url}" />`,
-    '<meta property="og:type" content="website" />',
-    `<meta property="og:title" content="${page.title}" />`,
-    `<meta property="og:description" content="${page.description}" />`,
-    `<meta property="og:url" content="${url}" />`,
-    `<meta property="og:site_name" content="${siteInfo.shortName}" />`,
-    '<meta property="og:locale" content="zh_CN" />',
+    `<title>${escapedTitle}</title>`,
+    `<meta name="description" content="${escapedDescription}" />`,
+    ...(isIndexable ? [
+      `<link rel="canonical" href="${url}" />`,
+      '<meta property="og:type" content="website" />',
+      `<meta property="og:title" content="${escapedTitle}" />`,
+      `<meta property="og:description" content="${escapedDescription}" />`,
+      `<meta property="og:url" content="${url}" />`,
+      `<meta property="og:site_name" content="${escapeHtml(siteInfo.shortName)}" />`,
+      '<meta property="og:locale" content="zh_CN" />',
+    ] : ['<meta name="robots" content="noindex,follow" />']),
     `<script type="application/ld+json">${json}</script>`,
   ].join('\n    ');
 }

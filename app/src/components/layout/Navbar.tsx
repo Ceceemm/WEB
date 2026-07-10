@@ -47,6 +47,9 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [navTheme, setNavTheme] = useState<NavTheme>(initialTheme);
   const navRef = useRef<HTMLElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useScrollLock(mobileOpen);
 
@@ -84,12 +87,60 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
     };
   }, []);
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 1024px)');
+    const closeOnDesktop = () => {
+      if (mediaQuery.matches) setMobileOpen(false);
+    };
+    mediaQuery.addEventListener('change', closeOnDesktop);
+    return () => mediaQuery.removeEventListener('change', closeOnDesktop);
+  }, []);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const menuButton = menuButtonRef.current;
+    const backgroundContent = document.querySelectorAll<HTMLElement>('main, footer');
+    backgroundContent.forEach((element) => element.setAttribute('inert', ''));
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMobileOpen(false);
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const focusable = menuRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])',
+      );
+      if (!focusable || focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      backgroundContent.forEach((element) => element.removeAttribute('inert'));
+      (previousFocus ?? menuButton)?.focus();
+    };
+  }, [mobileOpen]);
+
   const theme = themeStyles[navTheme];
 
   return (
     <>
       <nav
         ref={navRef}
+        aria-label="主导航"
         className={`fixed top-0 left-0 right-0 z-50 border-b transition-colors duration-300 ${theme.nav}`}
       >
         <div className="mx-auto flex h-14 max-w-[1440px] items-center justify-between px-4 sm:h-16 sm:px-5 md:h-[76px] lg:px-10">
@@ -135,6 +186,7 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
           {/* Mobile Toggle */}
           <button
             type="button"
+            ref={menuButtonRef}
             onClick={() => setMobileOpen(true)}
             className={`inline-flex h-11 w-11 items-center justify-center border border-current/25 transition-colors lg:hidden ${theme.menu}`}
             aria-label="打开菜单"
@@ -148,8 +200,12 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
 
       {/* Mobile Overlay Menu */}
       <div
+        ref={menuRef}
         id="mobile-menu"
         aria-hidden={!mobileOpen}
+        role="dialog"
+        aria-modal="true"
+        aria-label="移动端导航菜单"
         className={`fixed inset-0 z-[60] overflow-y-auto bg-forge-orange transition-transform duration-500 lg:hidden ${
           mobileOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
         }`}
@@ -164,10 +220,10 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
             </div>
             <button
               type="button"
+              ref={closeButtonRef}
               onClick={() => setMobileOpen(false)}
               className="inline-flex h-11 w-11 items-center justify-center border border-forge-warm-text text-forge-warm-text transition-colors hover:border-forge-paper hover:text-forge-paper"
               aria-label="关闭菜单"
-              tabIndex={mobileOpen ? 0 : -1}
             >
               <X size={26} />
             </button>
@@ -181,7 +237,6 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
                 onClick={() => setMobileOpen(false)}
                 className="border-b border-forge-warm-text/24 py-4 font-display text-xl font-bold text-forge-warm-text transition-colors hover:text-forge-paper sm:text-2xl"
                 style={{ animationDelay: `${i * 80}ms` }}
-                tabIndex={mobileOpen ? 0 : -1}
               >
                 {link.navLabel}
               </a>
@@ -193,7 +248,6 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
               href={`tel:${siteInfo.phone}`}
               onClick={() => setMobileOpen(false)}
               className="inline-flex min-h-12 items-center justify-center gap-2 border border-forge-warm-text bg-forge-warm-text px-4 text-sm font-semibold text-forge-paper"
-              tabIndex={mobileOpen ? 0 : -1}
             >
               <Phone size={18} aria-hidden="true" />
               电话咨询 {siteInfo.phone}

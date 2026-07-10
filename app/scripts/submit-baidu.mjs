@@ -10,7 +10,7 @@ const host = 'aqztjx.top';
 const siteUrl = `https://${host}`;
 const baiduSite = host;
 const token = process.env.BAIDU_PUSH_TOKEN;
-const endpoint = process.env.BAIDU_PUSH_ENDPOINT ?? 'http://data.zz.baidu.com/urls';
+const endpoint = process.env.BAIDU_PUSH_ENDPOINT ?? 'https://data.zz.baidu.com/urls';
 const dryRun = process.argv.includes('--dry-run');
 
 function extractSitemapUrls(xml) {
@@ -46,6 +46,9 @@ if (!token) {
 }
 
 const submitUrl = new URL(endpoint);
+if (submitUrl.protocol !== 'https:' || submitUrl.hostname !== 'data.zz.baidu.com') {
+  throw new Error('BAIDU_PUSH_ENDPOINT must use HTTPS on data.zz.baidu.com.');
+}
 submitUrl.searchParams.set('site', baiduSite);
 submitUrl.searchParams.set('token', token);
 
@@ -56,17 +59,19 @@ const response = await fetch(submitUrl, {
 });
 
 const responseText = await response.text();
-if (!response.ok) {
-  throw new Error(
-    `Baidu submission failed: HTTP ${response.status}${responseText ? ` ${responseText}` : ''}`,
-  );
-}
-
 let result;
 try {
   result = JSON.parse(responseText);
 } catch {
   result = responseText;
+}
+
+const hasBusinessError =
+  typeof result === 'object' &&
+  result !== null &&
+  ('error' in result || ('message' in result && !('success' in result)));
+if (!response.ok || hasBusinessError) {
+  throw new Error(`Baidu submission failed: HTTP ${response.status}`);
 }
 
 console.log('Baidu submission result:');

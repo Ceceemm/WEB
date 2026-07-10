@@ -1,7 +1,7 @@
 import { productCategories, products, type ProductCategory } from './products';
 import { siteInfo } from './site';
 
-export type PageKind = 'home' | 'about' | 'products' | 'category' | 'contact' | 'faq' | 'product';
+export type PageKind = 'home' | 'about' | 'products' | 'category' | 'contact' | 'faq' | 'product' | 'not-found';
 
 export interface PageMeta {
   path: string;
@@ -14,6 +14,7 @@ export interface PageMeta {
   navLabel?: string;
   priority: string;
   changefreq: string;
+  indexable?: boolean;
 }
 
 export interface ProductPageDetail {
@@ -626,9 +627,21 @@ export const pageRoutes: PageMeta[] = [
 
 export const navPages = pageRoutes.filter((page) => page.navLabel);
 
+export const notFoundPage: PageMeta = {
+  path: '/404.html',
+  title: '页面未找到 — 安丘增涛机械',
+  description: '您访问的页面不存在或已变更，请返回首页或查看产品分类。',
+  h1: '页面未找到',
+  kind: 'not-found',
+  priority: '0',
+  changefreq: 'never',
+  indexable: false,
+};
+
 export function normalizePath(pathname: string) {
   if (!pathname || pathname === '/') return '/';
   const cleanPath = pathname.split(/[?#]/)[0] ?? '/';
+  if (cleanPath === '/404.html') return cleanPath;
   if (cleanPath.endsWith('/index.html')) return cleanPath;
   if (cleanPath.endsWith('/')) return `${cleanPath}index.html`;
   return `${cleanPath}/index.html`;
@@ -636,7 +649,7 @@ export function normalizePath(pathname: string) {
 
 export function getPageByPath(pathname: string) {
   const normalized = normalizePath(pathname);
-  return pageRoutes.find((page) => page.path === normalized) ?? pageRoutes[0];
+  return pageRoutes.find((page) => page.path === normalized) ?? notFoundPage;
 }
 
 export function getCategoryProducts(categoryKey: ProductCategory['key']) {

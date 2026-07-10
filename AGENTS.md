@@ -42,10 +42,10 @@ Remove-Item "C:\path\to\file.txt"
 - `app/src/data/structured-data.ts`：WebSite、LocalBusiness、BreadcrumbList、Product、FAQPage 等 JSON-LD 和 sitemap 生成逻辑。
 - `app/src/pages/`：首页和新增静态多页内容。
 - `app/scripts/prerender.mjs`：生产构建后生成 `dist/**/index.html`。
-- `app/scripts/deploy-oss.mjs`：读取本机 `.ossutilconfig` 并上传 `app/dist` 到阿里云 OSS，不执行删除。
-- `app/scripts/submit-baidu.mjs`：读取 `dist/sitemap.xml` 并向百度普通收录 API 提交正式 HTTPS URL，token 只从环境变量读取。
+- `app/scripts/deploy-oss.mjs`：读取本机 `.ossutilconfig`，通过 HTTPS 上传 `app/dist` 到阿里云 OSS，PUT 请求带 `Content-MD5` 完整性校验且不执行删除。
+- `app/scripts/submit-baidu.mjs`：读取 `dist/sitemap.xml` 并仅向 `https://data.zz.baidu.com` 提交正式 HTTPS URL，token 只从环境变量读取。
 - `app/scripts/submit-indexnow.mjs`：读取 `dist/sitemap.xml` 并向 Bing IndexNow 提交正式 URL。
-- `app/scripts/renew-aliyun-free-cert.mjs`：检查或换新阿里云免费个人测试证书，并把新证书部署到 CDN；不删除 OSS 对象，不把私钥写入仓库。
+- `app/scripts/renew-aliyun-free-cert.mjs`：检查或换新阿里云免费个人测试证书，并通过 HTTPS 上传域名验证文件、把新证书部署到 CDN；不删除 OSS 对象，不把私钥写入仓库。
 - `app/scripts/install-cert-renew-task.mjs`：在用户目录生成 Windows 任务计划安装脚本和运行脚本，任务日志写入用户目录。
 - `app/public/images/products/`：产品图片，基本同时提供 `.jpg` 与 `.webp`。
 - `app/src/components/sections/`：页面各业务区块。
@@ -84,7 +84,7 @@ npm run preview:static -- 5175
 - `npm run build` 先执行 TypeScript 构建检查，再执行 Vite 客户端构建、SSR 入口构建和静态多页预渲染。
 - `npm run check` 依次执行 lint、测试、构建，适合作为最终验证。
 - `npm run preview:static -- 端口号` 使用 `app/dist` 启动轻量静态预览，适合 Codex 内置浏览器打不开 Vite 后台服务时使用。
-- `D:\soft\node.exe scripts\deploy-oss.mjs` 上传 `app/dist` 到阿里云 OSS；该脚本只执行 PutObject 覆盖/新增，不删除 OSS 对象。
+- `D:\soft\node.exe scripts\deploy-oss.mjs` 通过 HTTPS 上传 `app/dist` 到阿里云 OSS；该脚本只执行带 `Content-MD5` 的 PutObject 覆盖/新增，不删除 OSS 对象。
 - `npm run submit:baidu:dry` 预览将提交给百度普通收录的 URL；设置 `BAIDU_PUSH_TOKEN` 后运行 `npm run submit:baidu` 正式提交。
 - `npm run submit:indexnow:dry` 预览将提交给 Bing IndexNow 的 URL；`npm run submit:indexnow` 正式提交。
 - `npm run cert:check` 检查线上 HTTPS 证书与阿里云免费证书额度；`npm run cert:renew:dry` 预演自动换新；`npm run cert:renew` 执行换新；`npm run cert:task:install` 生成 Windows 任务计划安装脚本。
@@ -222,7 +222,7 @@ Bing / IndexNow 协作状态：
 
 - ICP 备案号当前为 `鲁ICP备2026031639号`，展示位置在 `app/src/components/layout/Footer.tsx`，链接应指向 `https://beian.miit.gov.cn/#/Integrated/index`。
 - 官网域名当前为 `aqztjx.top`，当前分支代码层正式 URL 使用 `https://aqztjx.top/`；线上 HTTPS 生效依赖阿里云 CDN/证书配置发布。
-- 阿里云 OSS Bucket 为 `aqztjx-site`，区域为华北2（北京）`oss-cn-beijing`；静态网站托管默认首页和默认 404 页均为 `index.html`，错误文档响应码为 `200`。
+- 阿里云 OSS Bucket 为 `aqztjx-site`，区域为华北2（北京）`oss-cn-beijing`；静态网站托管默认首页为 `index.html`、错误文档应设为 `404.html` 并返回 `404`。发布本次版本后需在 OSS 控制台同步该规则，避免未知 URL 被首页内容伪装为成功页。
 - 当前正式多页 URL 使用 `.../index.html` 形式；不要把 canonical、sitemap 或站内导航改回目录斜杠形式，除非 OSS 静态网站规则已确认能让目录 URL 返回对应子页。
 - 本机 OSS 发布凭据备忘：2026-06-18 已在 RAM 创建程序用户 `aqztjx-site-deploy`，自定义策略 `tpl-aqztjx-site-put-object`，资源范围 `acs:oss:*:*:aqztjx-site/*`，权限仅含 `oss:GetObject` 和 `oss:PutObject`，不含删除权限；当前 Windows 用户环境变量和 `C:\Users\TomatoLaser\.ossutilconfig` 已写入对应凭据，但仓库内不得记录 AccessKey ID、AccessKey Secret 或凭据文件内容。
 - 证书自动换新需要同一 RAM 用户额外具备 `yundun-cert:DescribePackageState`、`yundun-cert:CreateCertificateForPackageRequest`、`yundun-cert:DescribeCertificateState`、`yundun-cert:ListUserCertificateOrder`、`cdn:DescribeCdnDomainCertificateInfo`、`cdn:SetCdnDomainSSLCertificate`。

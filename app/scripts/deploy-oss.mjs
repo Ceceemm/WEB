@@ -1,7 +1,6 @@
-import { createHmac } from 'node:crypto';
-import { createReadStream } from 'node:fs';
-import { readdir, readFile, stat } from 'node:fs/promises';
-import http from 'node:http';
+import { createHash, createHmac } from 'node:crypto';
+import { readdir, readFile } from 'node:fs/promises';
+import https from 'node:https';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -67,7 +66,8 @@ function cacheControlFor(key) {
 
 async function putObject({ accessKeyID, accessKeySecret, stsToken }, filePath, objectKey = toObjectKey(filePath)) {
   const key = objectKey;
-  const fileStat = await stat(filePath);
+  const content = await readFile(filePath);
+  const contentMd5 = createHash('md5').update(content).digest('base64');
   const contentType = mimeTypes.get(path.extname(filePath).toLowerCase()) ?? 'application/octet-stream';
   const date = new Date().toUTCString();
   const ossHeaders = {
@@ -80,7 +80,7 @@ async function putObject({ accessKeyID, accessKeySecret, stsToken }, filePath, o
     .map(([name, value]) => `${name}:${value}\n`)
     .join('');
   const resource = `/${bucket}/${key}`;
-  const stringToSign = ['PUT', '', contentType, date, `${canonicalHeaders}${resource}`].join('\n');
+  const stringToSign = ['PUT', contentMd5, contentType, date, `${canonicalHeaders}${resource}`].join('\n');
   const signature = createHmac('sha1', accessKeySecret).update(stringToSign).digest('base64');
 
   const headers = {
@@ -88,13 +88,14 @@ async function putObject({ accessKeyID, accessKeySecret, stsToken }, filePath, o
     Date: date,
     Host: host,
     'Content-Type': contentType,
-    'Content-Length': fileStat.size,
+    'Content-Length': content.length,
+    'Content-MD5': contentMd5,
     'Cache-Control': cacheControlFor(key),
     ...ossHeaders,
   };
 
   await new Promise((resolve, reject) => {
-    const request = http.request(
+    const request = https.request(
       {
         method: 'PUT',
         host,
@@ -112,8 +113,9 @@ async function putObject({ accessKeyID, accessKeySecret, stsToken }, filePath, o
         });
       }
     );
+    request.setTimeout(30000, () => request.destroy(new Error(`OSS upload timed out for ${key}`)));
     request.on('error', reject);
-    createReadStream(filePath).pipe(request);
+    request.end(content);
   });
 
   return key;

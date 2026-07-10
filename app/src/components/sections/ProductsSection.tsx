@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useRef, useState, type KeyboardEvent } from 'react';
 import { ScrollReveal } from '@/components/common/ScrollReveal';
 import { WebpImage } from '@/components/common/WebpImage';
 import { ImageLightbox } from '@/components/common/ImageLightbox';
 import { productCategories, products, type Product, type ProductCategory } from '@/data/products';
 import { siteInfo } from '@/data/site';
+import { getProductPageDetail } from '@/data/pages';
 import { ZoomIn } from 'lucide-react';
 
 const hiddenProductSeriesIds = new Set(['p15', 'p19', 'p20', 'p21', 'p22', 'p25', 'p26']);
@@ -11,12 +12,37 @@ const hiddenProductSeriesIds = new Set(['p15', 'p19', 'p20', 'p21', 'p22', 'p25'
 export function ProductsSection() {
   const [activeCategory, setActiveCategory] = useState<ProductCategory['key']>('oil-press');
   const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const currentCategory =
     productCategories.find((c) => c.key === activeCategory) ?? productCategories[0];
   const categoryProducts = products.filter(
     (p) => p.category === activeCategory && !hiddenProductSeriesIds.has(p.id),
   );
+
+  const selectCategory = (index: number) => {
+    const next = productCategories[index];
+    if (!next) return;
+    setActiveCategory(next.key);
+    tabRefs.current[index]?.focus();
+  };
+
+  const handleTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    const lastIndex = productCategories.length - 1;
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      selectCategory(index === lastIndex ? 0 : index + 1);
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      selectCategory(index === 0 ? lastIndex : index - 1);
+    } else if (event.key === 'Home') {
+      event.preventDefault();
+      selectCategory(0);
+    } else if (event.key === 'End') {
+      event.preventDefault();
+      selectCategory(lastIndex);
+    }
+  };
 
   return (
     <section
@@ -48,16 +74,19 @@ export function ProductsSection() {
             role="tablist"
             aria-label="产品分类"
           >
-            {productCategories.map((cat) => (
+            {productCategories.map((cat, index) => (
               <button
+                ref={(node) => { tabRefs.current[index] = node; }}
                 key={cat.id}
                 id={`product-tab-${cat.key}`}
                 type="button"
                 role="tab"
                 aria-label={cat.label}
                 aria-selected={activeCategory === cat.key}
-                aria-controls={`product-panel-${cat.key}`}
+                aria-controls="product-panel"
+                tabIndex={activeCategory === cat.key ? 0 : -1}
                 onClick={() => setActiveCategory(cat.key)}
+                onKeyDown={(event) => handleTabKeyDown(event, index)}
                 className={`relative px-5 py-4 text-left text-sm font-semibold transition-all ${
                   activeCategory === cat.key
                     ? 'bg-forge-warm-text text-forge-paper'
@@ -97,7 +126,7 @@ export function ProductsSection() {
 
         {/* Product Grid */}
         <div
-          id={`product-panel-${activeCategory}`}
+          id="product-panel"
           className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-px bg-forge-warm-border border border-forge-warm-border"
           role="tabpanel"
           aria-labelledby={`product-tab-${activeCategory}`}
@@ -134,6 +163,7 @@ function ProductCard({
   onImageClick: () => void;
 }) {
   const [imgError, setImgError] = useState(false);
+  const detail = getProductPageDetail(product.id);
 
   return (
     <article className="group relative bg-forge-surface overflow-hidden transition-colors duration-300 hover:bg-forge-paper">
@@ -171,6 +201,14 @@ function ProductCard({
         <p className="mt-3 text-forge-warm-muted text-sm leading-7">
           {product.description}
         </p>
+        {detail && (
+          <a
+            href={detail.path}
+            className="mt-3 inline-flex text-sm font-semibold text-forge-orange underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forge-black focus-visible:ring-offset-2"
+          >
+            查看设备详情
+          </a>
+        )}
       </div>
 
       <div className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-forge-orange transition-transform duration-300 group-hover:scale-x-100" />
