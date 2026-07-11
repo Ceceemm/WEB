@@ -35,11 +35,11 @@ const themeStyles: Record<
   },
   warm: {
     nav: 'border-forge-warm-text/25 bg-forge-orange/40 shadow-[0_10px_34px_hsl(18_76%_30%_/_0.16)] backdrop-blur-xl',
-    brand: 'text-forge-warm-text',
-    subBrand: 'text-forge-warm-text/65',
-    link: 'text-forge-warm-text/75 hover:text-forge-warm-text',
+    brand: 'text-forge-paper',
+    subBrand: 'text-forge-cream/80',
+    link: 'text-forge-paper hover:text-forge-cream',
     phone: 'border-forge-warm-text bg-forge-warm-text text-forge-paper hover:border-forge-paper hover:bg-forge-paper hover:text-forge-warm-text',
-    menu: 'text-forge-warm-text hover:text-forge-paper',
+    menu: 'text-forge-paper hover:text-forge-cream',
   },
 };
 
@@ -101,8 +101,19 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
 
     const previousFocus = document.activeElement as HTMLElement | null;
     const menuButton = menuButtonRef.current;
-    const backgroundContent = document.querySelectorAll<HTMLElement>('main, footer');
-    backgroundContent.forEach((element) => element.setAttribute('inert', ''));
+    const backgroundContent = [
+      navRef.current,
+      document.querySelector<HTMLElement>('.skip-link'),
+      document.querySelector<HTMLElement>('main'),
+      document.querySelector<HTMLElement>('footer'),
+    ].filter((element): element is HTMLElement => element !== null);
+    const addedInert = new Set<HTMLElement>();
+    backgroundContent.forEach((element) => {
+      if (!element.hasAttribute('inert')) {
+        element.setAttribute('inert', '');
+        addedInert.add(element);
+      }
+    });
     closeButtonRef.current?.focus();
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -129,8 +140,9 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      backgroundContent.forEach((element) => element.removeAttribute('inert'));
-      (previousFocus ?? menuButton)?.focus();
+      addedInert.forEach((element) => element.removeAttribute('inert'));
+      const focusTarget = menuButton?.isConnected ? menuButton : previousFocus;
+      if (focusTarget?.isConnected) focusTarget.focus();
     };
   }, [mobileOpen]);
 
@@ -206,15 +218,16 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
         role="dialog"
         aria-modal="true"
         aria-label="移动端导航菜单"
+        inert={mobileOpen ? undefined : true}
         className={`fixed inset-0 z-[60] overflow-y-auto bg-forge-orange transition-transform duration-500 lg:hidden ${
           mobileOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
         }`}
       >
         <div className="flex min-h-dvh flex-col px-5 py-5">
           <div className="flex items-center justify-between">
-            <div className="text-forge-warm-text">
+            <div className="text-forge-paper">
               <p className="font-display text-xl font-black">安丘增涛机械</p>
-              <p className="mt-1 text-xs font-semibold tracking-[0.16em] text-forge-warm-text/70">
+              <p className="mt-1 text-xs font-semibold tracking-[0.16em] text-forge-cream/80">
                 设备咨询入口
               </p>
             </div>
@@ -222,8 +235,9 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
               type="button"
               ref={closeButtonRef}
               onClick={() => setMobileOpen(false)}
-              className="inline-flex h-11 w-11 items-center justify-center border border-forge-warm-text text-forge-warm-text transition-colors hover:border-forge-paper hover:text-forge-paper"
+              className="inline-flex h-11 w-11 items-center justify-center border border-forge-paper/30 text-forge-paper transition-colors hover:border-forge-paper hover:text-forge-cream"
               aria-label="关闭菜单"
+              tabIndex={mobileOpen ? 0 : -1}
             >
               <X size={26} />
             </button>
@@ -235,24 +249,26 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
                 key={link.path}
                 href={link.path}
                 onClick={() => setMobileOpen(false)}
-                className="border-b border-forge-warm-text/24 py-4 font-display text-xl font-bold text-forge-warm-text transition-colors hover:text-forge-paper sm:text-2xl"
+                className="border-b border-forge-paper/30 py-4 font-display text-xl font-bold text-forge-paper transition-colors hover:text-forge-cream sm:text-2xl"
                 style={{ animationDelay: `${i * 80}ms` }}
+                tabIndex={mobileOpen ? 0 : -1}
               >
                 {link.navLabel}
               </a>
             ))}
           </div>
 
-          <div className="grid gap-2 border-t border-forge-warm-text/30 pt-4 sm:gap-3 sm:pt-5">
+          <div className="grid gap-2 border-t border-forge-paper/30 pt-4 sm:gap-3 sm:pt-5">
             <a
               href={`tel:${siteInfo.phone}`}
               onClick={() => setMobileOpen(false)}
               className="inline-flex min-h-12 items-center justify-center gap-2 border border-forge-warm-text bg-forge-warm-text px-4 text-sm font-semibold text-forge-paper"
+              tabIndex={mobileOpen ? 0 : -1}
             >
               <Phone size={18} aria-hidden="true" />
               电话咨询 {siteInfo.phone}
             </a>
-            <div className="inline-flex min-h-12 items-center justify-center gap-2 border border-forge-warm-text px-4 text-sm font-semibold text-forge-warm-text">
+            <div className="inline-flex min-h-12 items-center justify-center gap-2 border border-forge-paper/30 px-4 text-sm font-semibold text-forge-paper">
               <MessageCircle size={18} aria-hidden="true" />
               微信 {siteInfo.wechat}
             </div>

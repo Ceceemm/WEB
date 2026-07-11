@@ -160,6 +160,9 @@ HTTPS 与免费证书换新：
 - 先运行 `D:\soft\npm.cmd run build`。
 - 再运行 `D:\soft\node.exe scripts\deploy-oss.mjs` 上传 `app/dist` 到 `aqztjx-site`。
 - 上传脚本读取 `C:\Users\TomatoLaser\.ossutilconfig`，只执行 `PutObject` 覆盖/新增对象，不执行删除。
+- 普通上传命令只上传 `dist` 文件；网站规则需单独运行 `D:\soft\npm.cmd run oss:website:configure`。
+- 网站规则配置需要 `oss:PutBucketWebsite`；失败会返回非零退出码。当前任务不得实际执行该命令。
+- 不得在文档、代码或提交信息写入 AccessKey、token 或其他凭据内容。
 - `assets/` 下资源使用长期缓存，其余 HTML、sitemap、robots 使用 `no-cache`。
 
 本机 OSS 发布凭据备忘：

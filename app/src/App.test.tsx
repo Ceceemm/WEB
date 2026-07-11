@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import App from './App';
 
 describe('App routing', () => {
@@ -35,9 +36,24 @@ describe('App routing', () => {
     expect(screen.getAllByText('螺旋榨油机').length).toBeGreaterThan(0);
   });
 
-  it('falls back to homepage for unknown path', () => {
+  it('renders not-found page for unknown path', () => {
     render(<App path="/nonexistent-path/index.html" />);
-    // Unknown path falls back to homepage (getPageByPath returns pageRoutes[0])
-    expect(screen.getAllByText(/安丘市增涛机械有限公司/).length).toBeGreaterThan(0);
+    expect(screen.getByRole('heading', { name: '页面未找到' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '返回首页' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '查看产品分类' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: '安丘增涛 机械有限公司' })).not.toBeInTheDocument();
+  });
+
+  it('focuses skip link before navigation', async () => {
+    const user = userEvent.setup();
+    render(<App path="/" />);
+
+    await user.tab();
+
+    const skipLink = screen.getByRole('link', { name: '跳到主要内容' });
+    expect(skipLink).toHaveFocus();
+    expect(skipLink).toHaveAttribute('href', '#main-content');
+    expect(screen.getByRole('main')).toHaveAttribute('id', 'main-content');
+    expect(screen.getByRole('main')).toHaveAttribute('tabindex', '-1');
   });
 });

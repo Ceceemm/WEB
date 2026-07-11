@@ -32,8 +32,8 @@ function App({ path }: { path?: string }) {
   return (
     <AppErrorBoundary>
       <div className="min-h-screen bg-forge-paper text-forge-warm-text font-body">
-        <Navbar initialTheme={page.kind === 'home' ? 'light' : 'dark'} />
         <a className="skip-link" href="#main-content">跳到主要内容</a>
+        <Navbar initialTheme={page.kind === 'home' ? 'light' : 'dark'} />
         <main id="main-content" tabIndex={-1}>{pageContent}</main>
         <Footer />
       </div>

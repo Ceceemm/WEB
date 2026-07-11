@@ -13,18 +13,24 @@ interface ImageLightboxProps {
 export function ImageLightbox({ src, alt, open, onClose }: ImageLightboxProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (!open) return;
 
     const previousFocus = document.activeElement as HTMLElement | null;
     const appRoot = document.getElementById('root');
-    appRoot?.setAttribute('inert', '');
+    const addedInert = Boolean(appRoot && !appRoot.hasAttribute('inert'));
+    if (addedInert) appRoot?.setAttribute('inert', '');
     closeButtonRef.current?.focus();
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onClose();
+        onCloseRef.current();
         return;
       }
       if (event.key !== 'Tab') return;
@@ -47,10 +53,10 @@ export function ImageLightbox({ src, alt, open, onClose }: ImageLightboxProps) {
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      appRoot?.removeAttribute('inert');
-      previousFocus?.focus();
+      if (addedInert) appRoot?.removeAttribute('inert');
+      if (previousFocus?.isConnected) previousFocus.focus();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   useScrollLock(open);
 

@@ -30,7 +30,7 @@ export function GallerySection() {
             </div>
           </ScrollReveal>
 
-          <ScrollReveal delay={100}>
+          <ScrollReveal>
             <p className="max-w-sm text-sm leading-7 text-forge-warm-muted">
               点击图片查看大图，重点观察结构、比例、出料口、输送位置和现场占地。
             </p>
@@ -42,7 +42,7 @@ export function GallerySection() {
           {displayProducts.map((product, index) => {
             const isFeatured = product.featured && index === 0;
             return (
-              <ScrollReveal key={product.id} delay={index * 60}>
+              <ScrollReveal key={product.id}>
                 <button
                   type="button"
                   className="break-inside-avoid group relative block w-full cursor-pointer overflow-hidden border border-forge-warm-border bg-forge-paper text-left transition-all duration-500 hover:border-forge-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forge-orange focus-visible:ring-offset-2 focus-visible:ring-offset-forge-surface"

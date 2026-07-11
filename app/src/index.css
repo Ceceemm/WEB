@@ -84,7 +84,7 @@
     z-index: 100;
     transform: translateY(-150%);
     border: 1px solid hsl(var(--forge-black));
-    background: hsl(var(--forge-paper));
+    background: hsl(var(--warm-paper));
     color: hsl(var(--forge-black));
     padding: 0.65rem 0.9rem;
     font-weight: 700;

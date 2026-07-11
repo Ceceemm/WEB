@@ -20,7 +20,8 @@
     "cert:renew:dry": "node scripts/renew-aliyun-free-cert.mjs --dry-run",
     "cert:renew": "node scripts/renew-aliyun-free-cert.mjs",
     "cert:task:install": "node scripts/install-cert-renew-task.mjs",
-    "oss-orphans": "node scripts/oss-orphans.mjs"
+    "oss-orphans": "node scripts/oss-orphans.mjs",
+    "oss:website:configure": "node scripts/deploy-oss.mjs --website-only"
   },
   "dependencies": {
     "lucide-react": "^0.562.0",

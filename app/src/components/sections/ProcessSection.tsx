@@ -34,7 +34,7 @@ export function ProcessSection() {
       <div className="absolute inset-0 opacity-[0.08] factory-grid" />
       <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">
         <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start md:gap-10">
-          <ScrollReveal direction="right">
+          <ScrollReveal>
             <div>
               <p className="text-sm font-semibold text-forge-orange">制造流程</p>
               <h2 className="mt-4 space-y-[2mm] font-display text-3xl md:text-6xl font-black leading-none">
@@ -49,7 +49,7 @@ export function ProcessSection() {
 
           <div className="grid gap-px bg-forge-cream/18 border border-forge-cream/18 sm:grid-cols-2">
             {steps.map((step, index) => (
-              <ScrollReveal key={step.title} delay={index * 80}>
+              <ScrollReveal key={step.title}>
                 <div className="min-h-[250px] bg-forge-warm-text p-6 md:p-8">
                   <div className="flex items-center justify-between gap-4">
                     <step.icon size={28} className="text-forge-orange" aria-hidden="true" />

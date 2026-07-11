@@ -3,6 +3,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import https from 'node:https';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { getDeployMode, runDeployMode } from './deploy-mode.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const appDir = path.resolve(__dirname, '..');
@@ -152,13 +153,25 @@ async function configureWebsite({ accessKeyID, accessKeySecret, stsToken }) {
         ...ossHeaders,
       },
     }, (response) => {
-      response.resume();
+      const chunks = [];
+      let bodyLength = 0;
+      response.on('data', (chunk) => {
+        if (bodyLength >= 2048) return;
+        const remaining = 2048 - bodyLength;
+        const limited = chunk.subarray(0, remaining);
+        chunks.push(limited);
+        bodyLength += limited.length;
+      });
       response.on('end', () => {
         if (response.statusCode >= 200 && response.statusCode < 300) {
           resolve();
           return;
         }
-        reject(new Error(`OSS website configuration failed: HTTP ${response.statusCode}`));
+        const body = Buffer.concat(chunks).toString('utf8');
+        const errorCode = body.match(/<Code>([^<]+)<\/Code>/)?.[1];
+        const requestId = response.headers['x-oss-request-id'] ?? 'unavailable';
+        const detail = errorCode ? `OSS Code ${errorCode}` : `response ${body || 'unavailable'}`;
+        reject(new Error(`OSS website configuration failed: HTTP ${response.statusCode}; OSS Request ID ${requestId}; ${detail}`));
       });
     });
     request.setTimeout(30000, () => request.destroy(new Error('OSS website configuration timed out')));
@@ -168,34 +181,36 @@ async function configureWebsite({ accessKeyID, accessKeySecret, stsToken }) {
   console.log('OSS website configured: index.html / 404.html (404)');
 }
 
+async function deployObjects(config) {
+  const files = await listFiles(distDir);
+  const uploadedKeys = [];
+  for (const file of files) {
+    const key = await putObject(config, file);
+    uploadedKeys.push(key);
+    console.log(`uploaded ${key}`);
+
+    const relativeKey = toObjectKey(file);
+    if (relativeKey.endsWith('/index.html')) {
+      const routeKey = relativeKey.slice(0, -'index.html'.length);
+      const routeKeyWithoutSlash = routeKey.slice(0, -1);
+      for (const aliasKey of [routeKey, routeKeyWithoutSlash]) {
+        await putObject(config, file, aliasKey);
+        uploadedKeys.push(aliasKey);
+        console.log(`uploaded ${aliasKey}`);
+      }
+    }
+  }
+  console.log(`OSS deploy complete: ${uploadedKeys.length} objects from ${files.length} files`);
+}
+
+const mode = getDeployMode(process.argv.slice(2));
 const configText = await readFile(configPath, 'utf8');
 const config = parseConfig(configText);
 if (!config.accessKeyID || !config.accessKeySecret) {
   throw new Error('Missing accessKeyID or accessKeySecret in .ossutilconfig');
 }
 
-const files = await listFiles(distDir);
-const uploadedKeys = [];
-for (const file of files) {
-  const key = await putObject(config, file);
-  uploadedKeys.push(key);
-  console.log(`uploaded ${key}`);
-
-  const relativeKey = toObjectKey(file);
-  if (relativeKey.endsWith('/index.html')) {
-    const routeKey = relativeKey.slice(0, -'index.html'.length);
-    const routeKeyWithoutSlash = routeKey.slice(0, -1);
-    for (const aliasKey of [routeKey, routeKeyWithoutSlash]) {
-      await putObject(config, file, aliasKey);
-      uploadedKeys.push(aliasKey);
-      console.log(`uploaded ${aliasKey}`);
-    }
-  }
-}
-console.log(`OSS deploy complete: ${uploadedKeys.length} objects from ${files.length} files`);
-try {
-  await configureWebsite(config);
-} catch (error) {
-  console.warn(`OSS website rule was not updated: ${error.message}`);
-  console.warn('Grant oss:PutBucketWebsite to the deploy identity, then rerun this command or configure 404.html/404 in the OSS console.');
-}
+await runDeployMode(mode, {
+  deployObjects: () => deployObjects(config),
+  configureWebsite: () => configureWebsite(config),
+});

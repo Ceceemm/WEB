@@ -60,7 +60,7 @@ export function ProductsSection() {
               </h2>
             </div>
           </ScrollReveal>
-          <ScrollReveal delay={100}>
+          <ScrollReveal>
             <p className="max-w-2xl text-base md:text-lg leading-8 text-forge-warm-muted">
               从压榨、筛选、粉碎、炒制到煤炭装袋，产品以真实设备照片为主，便于快速判断型号与使用场景。
             </p>
@@ -68,7 +68,7 @@ export function ProductsSection() {
         </div>
 
         {/* Category Tabs */}
-        <ScrollReveal delay={100}>
+        <ScrollReveal>
           <div
             className="mb-6 grid gap-2 border-y border-forge-warm-border py-2 sm:grid-cols-3 md:mb-10"
             role="tablist"
@@ -103,14 +103,14 @@ export function ProductsSection() {
         </ScrollReveal>
 
         {/* Category Description */}
-        <ScrollReveal delay={150}>
+        <ScrollReveal>
           <p className="mb-8 text-sm font-semibold text-forge-orange">
             {currentCategory.description}
           </p>
         </ScrollReveal>
 
         {/* Business scope notice - feed/farm equipment by inquiry */}
-        <ScrollReveal delay={200}>
+        <ScrollReveal>
           <div className="mb-10 flex flex-col gap-3 border border-forge-warm-border bg-forge-surface p-4 text-sm text-forge-warm-muted sm:flex-row sm:items-center sm:justify-between md:p-5">
             <p>
               线上重点展示油脂加工与装袋设备，饲料生产与农田装备欢迎来电咨询。
@@ -132,8 +132,8 @@ export function ProductsSection() {
           aria-labelledby={`product-tab-${activeCategory}`}
           aria-label={currentCategory.label}
         >
-          {categoryProducts.map((product, index) => (
-            <ScrollReveal key={product.id} delay={index * 80}>
+          {categoryProducts.map((product) => (
+            <ScrollReveal key={product.id}>
               <ProductCard
                 product={product}
                 onImageClick={() => setLightbox({ src: product.image, alt: product.name })}

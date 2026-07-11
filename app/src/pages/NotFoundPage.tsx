@@ -7,7 +7,7 @@ export function NotFoundPage() {
         <PackageSearch aria-hidden="true" className="mx-auto mb-6 h-12 w-12 text-forge-orange" />
         <p className="font-mono text-sm tracking-[0.2em] text-forge-orange">404</p>
         <h1 className="mt-3 font-display text-4xl font-bold text-forge-black sm:text-5xl">页面未找到</h1>
-        <p className="mx-auto mt-5 max-w-xl leading-8 text-forge-muted">
+        <p className="mx-auto mt-5 max-w-xl leading-8 text-forge-warm-muted">
           您访问的页面不存在或地址已变更。可返回首页，或从产品分类继续查看设备信息。
         </p>
         <div className="mt-9 flex flex-wrap justify-center gap-4">

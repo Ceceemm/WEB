@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { pageRoutes, productPageDetails } from './pages';
-import { getSitemapXml, getStructuredData } from './structured-data';
+import { notFoundPage, pageRoutes, productPageDetails } from './pages';
+import { getHeadHtml, getSitemapXml, getStructuredData } from './structured-data';
 import { faqItems } from './site';
 
 type JsonLdNode = Record<string, unknown>;
@@ -71,6 +71,20 @@ describe('page routes and structured data', () => {
   it('includes every route in the sitemap', () => {
     const sitemap = getSitemapXml();
 
+    for (const page of pageRoutes) {
+      expect(sitemap).toContain(`https://aqztjx.top${page.path}`);
+    }
+  });
+
+  it('keeps not-found metadata non-indexable and out of sitemap', () => {
+    const head = getHeadHtml(notFoundPage);
+    const sitemap = getSitemapXml();
+
+    expect(head).toContain('noindex,follow');
+    expect(head).not.toContain('rel="canonical"');
+    expect(head).not.toContain('og:url');
+    expect(sitemap).not.toContain('/404.html');
+    expect(sitemap).not.toContain('<lastmod>');
     for (const page of pageRoutes) {
       expect(sitemap).toContain(`https://aqztjx.top${page.path}`);
     }

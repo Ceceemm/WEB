@@ -11,16 +11,16 @@ export function ContactSection() {
       <div className="absolute inset-0 opacity-[0.12] factory-grid" />
       <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">
         <div className="grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-stretch md:gap-10">
-          <ScrollReveal direction="right">
-            <div className="flex h-full flex-col justify-between border border-forge-warm-text bg-forge-orange p-7 md:p-10">
+          <ScrollReveal>
+            <div className="flex h-full flex-col justify-between border border-forge-paper/30 bg-forge-orange p-7 md:p-10">
               <div>
-                <p className="text-sm font-semibold text-forge-warm-text">联系我们</p>
-                <h2 className="mt-3 space-y-[2mm] font-display text-4xl md:text-7xl font-black leading-none text-forge-warm-text md:mt-5">
+                <p className="text-sm font-semibold text-forge-paper">联系我们</p>
+                <h2 className="mt-3 space-y-[2mm] font-display text-4xl md:text-7xl font-black leading-none text-forge-paper md:mt-5">
                   <span className="block">需要选型</span>
                   <span className="block">先打电话</span>
                 </h2>
               </div>
-              <p className="mt-10 max-w-xl text-lg leading-9 text-forge-warm-text/76">
+              <p className="mt-10 max-w-xl text-lg leading-9 text-forge-cream/80">
                 告诉我们原料、产量、场地和用途，先判断适合的设备系列，再继续确认型号与配置。
               </p>
             </div>
@@ -33,7 +33,7 @@ export function ContactSection() {
           </div>
         </div>
 
-        <ScrollReveal delay={150}>
+        <ScrollReveal>
           <div className="mt-6 grid overflow-hidden border border-forge-warm-text bg-forge-paper lg:grid-cols-[1.05fr_0.95fr] md:mt-10">
             <div className="relative min-h-[320px] bg-forge-surface">
               <img
