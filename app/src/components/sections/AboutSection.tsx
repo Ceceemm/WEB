@@ -13,7 +13,7 @@ export function AboutSection() {
     >
       <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-10">
         <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-8 lg:gap-20 items-start md:gap-12">
-          <ScrollReveal direction="right">
+          <ScrollReveal>
             <div className="sticky top-28">
               <p className="text-sm font-semibold text-forge-orange">公司概况</p>
               <h2 className="mt-5 max-w-[10ch] font-display text-3xl md:text-6xl font-black leading-tight text-forge-warm-text">
@@ -23,7 +23,7 @@ export function AboutSection() {
             </div>
           </ScrollReveal>
 
-          <ScrollReveal direction="right">
+          <ScrollReveal>
             <div className="max-w-3xl space-y-5 text-forge-warm-muted leading-8 text-base md:space-y-6 md:text-lg md:leading-9">
               <p>
                 安丘市增涛机械有限公司成立于

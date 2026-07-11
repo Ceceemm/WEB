@@ -1,4 +1,5 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { useScrollLock } from '@/hooks/use-scroll-lock';
 
@@ -10,28 +11,60 @@ interface ImageLightboxProps {
 }
 
 export function ImageLightbox({ src, alt, open, onClose }: ImageLightboxProps) {
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    },
-    [onClose]
-  );
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const onCloseRef = useRef(onClose);
 
   useEffect(() => {
-    if (open) {
-      document.addEventListener('keydown', handleKeyDown);
-    }
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const appRoot = document.getElementById('root');
+    const addedInert = Boolean(appRoot && !appRoot.hasAttribute('inert'));
+    if (addedInert) appRoot?.setAttribute('inert', '');
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onCloseRef.current();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+
+      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])',
+      );
+      if (!focusable || focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      if (addedInert) appRoot?.removeAttribute('inert');
+      if (previousFocus?.isConnected) previousFocus.focus();
     };
-  }, [open, handleKeyDown]);
+  }, [open]);
 
   useScrollLock(open);
 
   if (!open) return null;
 
-  return (
+  const lightbox = (
     <div
+      ref={dialogRef}
       className="fixed inset-0 z-[100] flex items-center justify-center bg-forge-black/95 backdrop-blur-sm animate-fade-in"
       onClick={onClose}
       role="dialog"
@@ -41,7 +74,8 @@ export function ImageLightbox({ src, alt, open, onClose }: ImageLightboxProps) {
       <button
         type="button"
         onClick={onClose}
-        className="absolute top-6 right-6 z-10 p-2 rounded-full bg-forge-mid/80 hover:bg-forge-orange text-forge-cream transition-colors"
+        ref={closeButtonRef}
+        className="absolute top-6 right-6 z-10 rounded-full bg-forge-mid/80 p-2 text-forge-cream transition-colors hover:bg-forge-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forge-paper"
         aria-label="关闭图片预览"
       >
         <X size={24} />
@@ -61,4 +95,6 @@ export function ImageLightbox({ src, alt, open, onClose }: ImageLightboxProps) {
       </div>
     </div>
   );
+
+  return createPortal(lightbox, document.body);
 }

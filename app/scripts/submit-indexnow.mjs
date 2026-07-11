@@ -8,7 +8,7 @@ const distDir = path.join(appDir, 'dist');
 const publicDir = path.join(appDir, 'public');
 
 const host = 'aqztjx.top';
-const siteUrl = `http://${host}`;
+const siteUrl = `https://${host}`;
 const keyFileName = 'b00aa3db8702439f8eab75fdb067f3c4.txt';
 const endpoint = 'https://www.bing.com/indexnow';
 const dryRun = process.argv.includes('--dry-run');
@@ -19,7 +19,7 @@ function extractSitemapUrls(xml) {
 
 function assertProjectUrl(url) {
   const parsed = new URL(url);
-  if (parsed.protocol !== 'http:' || parsed.hostname !== host) {
+  if (parsed.protocol !== 'https:' || parsed.hostname !== host) {
     throw new Error(`Unexpected URL in sitemap: ${url}`);
   }
 }

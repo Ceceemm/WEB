@@ -1,9 +1,9 @@
 export const siteInfo = {
   name: '安丘市增涛机械有限公司',
   shortName: '安丘增涛机械',
-  url: 'http://aqztjx.top',
+  url: 'https://aqztjx.top',
   phone: '13606464864',
-  phoneInternational: '+86-13606464864',
+  phoneInternational: '+8613606464864',
   wechat: 'AQZTJX',
   foundingYear: 2012,
   registrationNumber: '91370784MA3C52AM0W',

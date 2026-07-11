@@ -1,14 +1,15 @@
+import { AppErrorBoundary } from '@/components/common/AppErrorBoundary';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { getPageByPath } from '@/data/pages';
 import { HomePage } from '@/pages/HomePage';
-import {
-  AboutPage,
-  CategoryPage,
-  ContactPage,
-  FaqPage,
-  ProductsOverviewPage,
-} from '@/pages/StaticPages';
+import { AboutPage } from '@/pages/AboutPage';
+import { CategoryPage } from '@/pages/CategoryPage';
+import { ContactPage } from '@/pages/ContactPage';
+import { FaqPage } from '@/pages/FaqPage';
+import { ProductDetailPage } from '@/pages/ProductDetailPage';
+import { ProductsOverviewPage } from '@/pages/ProductsOverviewPage';
+import { NotFoundPage } from '@/pages/NotFoundPage';
 
 function App({ path }: { path?: string }) {
   const currentPath =
@@ -24,15 +25,19 @@ function App({ path }: { path?: string }) {
     }
     if (page.kind === 'contact') return <ContactPage />;
     if (page.kind === 'faq') return <FaqPage />;
-    return <HomePage />;
+    if (page.kind === 'product') return <ProductDetailPage path={page.path} />;
+    return <NotFoundPage />;
   })();
 
   return (
-    <div className="min-h-screen bg-forge-paper text-forge-warm-text font-body">
-      <Navbar initialTheme={page.kind === 'home' ? 'light' : 'dark'} />
-      <main>{pageContent}</main>
-      <Footer />
-    </div>
+    <AppErrorBoundary>
+      <div className="min-h-screen bg-forge-paper text-forge-warm-text font-body">
+        <a className="skip-link" href="#main-content">跳到主要内容</a>
+        <Navbar initialTheme={page.kind === 'home' ? 'light' : 'dark'} />
+        <main id="main-content" tabIndex={-1}>{pageContent}</main>
+        <Footer />
+      </div>
+    </AppErrorBoundary>
   );
 }
 

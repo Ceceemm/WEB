@@ -88,20 +88,37 @@ npm run lint      # 代码检查
 npm run test:run  # 运行测试
 npm run check     # lint + test + build
 npm run preview   # 预览构建结果
+npm run submit:baidu:dry    # 检查将提交给百度普通收录的 URL
+npm run submit:indexnow:dry # 检查将提交给 Bing IndexNow 的 URL
+npm run cert:check          # 检查线上 HTTPS 证书和阿里云免费证书额度
+npm run cert:renew:dry      # 预演免费证书自动换新，不申请、不上传、不切 CDN
 ```
 
 生产构建会先完成 Vite 客户端构建，再构建 SSR 入口并预渲染静态多页 HTML。
 
 当前静态页面包括：
 
-- `http://aqztjx.top/`
-- `http://aqztjx.top/gongsi/index.html`
-- `http://aqztjx.top/chanpin/index.html`
-- `http://aqztjx.top/chanpin/zhayou-shebei/index.html`
-- `http://aqztjx.top/chanpin/chuli-shebei/index.html`
-- `http://aqztjx.top/chanpin/zhuangdai-shebei/index.html`
-- `http://aqztjx.top/lianxi/index.html`
-- `http://aqztjx.top/wenti/index.html`
+- `https://aqztjx.top/`
+- `https://aqztjx.top/gongsi/index.html`
+- `https://aqztjx.top/chanpin/index.html`
+- `https://aqztjx.top/chanpin/zhayou-shebei/index.html`
+- `https://aqztjx.top/chanpin/chuli-shebei/index.html`
+- `https://aqztjx.top/chanpin/zhuangdai-shebei/index.html`
+- `https://aqztjx.top/lianxi/index.html`
+- `https://aqztjx.top/wenti/index.html`
+
+产品详情页：
+
+- `https://aqztjx.top/chanpin/luoxuan-zhayouji/index.html`（螺旋榨油机）
+- `https://aqztjx.top/chanpin/yeya-zhayouji/index.html`（液压榨油机）
+- `https://aqztjx.top/chanpin/huasheng-zhayouji/index.html`（花生榨油机）
+- `https://aqztjx.top/chanpin/dadou-zhayouji/index.html`（大豆榨油机）
+- `https://aqztjx.top/chanpin/mikang-zhayouji/index.html`（米糠榨油机）
+- `https://aqztjx.top/chanpin/yuzhaji/index.html`（预榨机）
+- `https://aqztjx.top/chanpin/baitu-zhayouji/index.html`（白土榨油机）
+- `https://aqztjx.top/chanpin/feiyouni-zhayouji/index.html`（废油泥榨油机）
+- `https://aqztjx.top/chanpin/youliao-chaoguo/index.html`（油料炒锅）
+- `https://aqztjx.top/chanpin/meitan-zhuangdaiji/index.html`（煤炭装袋机）
 
 说明：当前 OSS 静态网站规则会把 `/wenti/`、`/chanpin/` 这类目录 URL 回落到首页，因此正式 canonical、站内链接和 sitemap 使用 `.../index.html` 形式，保证搜索引擎和 AI 抓取时拿到独立页面正文。
 
@@ -121,16 +138,31 @@ ICP备案已通过，当前网站底部展示的备案号为 `鲁ICP备202603163
 
 - 阿里云 OSS Bucket：`aqztjx-site`。
 - 区域：华北2（北京），`oss-cn-beijing`。
-- 静态网站托管已开启，默认首页和默认 404 页均为 `index.html`，错误文档响应码为 `200`。
-- 当前正式链接为 `http://aqztjx.top/` 和 `http://www.aqztjx.top/`。
-- 当前暂不开通 CDN，HTTPS 也暂未配置；对外不要使用 `https://` 链接。
+- 静态网站托管默认首页为 `index.html`；错误文档应设为 `404.html` 并返回 `404`，以免未知 URL 被首页内容伪装为成功页。
+- 当前代码层正式链接为 `https://aqztjx.top/`，HTTPS 生效依赖阿里云 CDN/证书配置上线。
+- `www.aqztjx.top` 不作为百度主提交站点；如需启用，应单独在搜索资源平台验证。
 - 当前项目为纯静态官网，不需要 ECS、数据库或后端服务器。
+
+HTTPS 与免费证书换新：
+
+- 计划使用阿里云 CDN 作为 HTTPS 入口，源站继续指向现有 OSS 静态网站。
+- 阿里云个人测试证书（免费版）每张有效期 90 天，每个实名认证主体每自然年最多 20 张；到期不支持续费，只能重新申请新证书并替换部署。
+- `D:\soft\npm.cmd run cert:check` 用于检查线上证书和免费证书额度。
+- `D:\soft\npm.cmd run cert:renew:dry` 只预演流程，不申请证书、不上传验证文件、不更新 CDN。
+- `D:\soft\npm.cmd run cert:renew` 会在证书剩余天数低于阈值时申请新免费证书、上传文件验证、签发后切换 CDN 证书。
+- `D:\soft\npm.cmd run cert:task:install` 会在当前用户目录生成 Windows 任务计划安装脚本和运行脚本；任务每周检查一次，日志写入 `C:\Users\TomatoLaser\.aqztjx\cert-renew.log`。
+- 默认只更新 `aqztjx.top` 的 CDN 证书；如需同时更新其他 CDN 域名，可设置环境变量 `ALIYUN_CDN_DOMAINS=aqztjx.top,www.aqztjx.top`。
+- 默认申请域名为 `www.aqztjx.top`，可通过 `ALIYUN_CERT_REQUEST_DOMAIN=aqztjx.top` 改为直接申请主域名；脚本会校验证书必须覆盖 `aqztjx.top`，否则不会部署。
+- 免费证书不保证 OCSP 稳定性，属于低成本方案；CDN 会产生流量费和 HTTPS 请求费，上线前必须配置费用/流量告警。
 
 发布方式：
 
 - 先运行 `D:\soft\npm.cmd run build`。
 - 再运行 `D:\soft\node.exe scripts\deploy-oss.mjs` 上传 `app/dist` 到 `aqztjx-site`。
 - 上传脚本读取 `C:\Users\TomatoLaser\.ossutilconfig`，只执行 `PutObject` 覆盖/新增对象，不执行删除。
+- 普通上传命令只上传 `dist` 文件；网站规则需单独运行 `D:\soft\npm.cmd run oss:website:configure`。
+- 网站规则配置需要 `oss:PutBucketWebsite`；失败会返回非零退出码。当前任务不得实际执行该命令。
+- 不得在文档、代码或提交信息写入 AccessKey、token 或其他凭据内容。
 - `assets/` 下资源使用长期缓存，其余 HTML、sitemap、robots 使用 `no-cache`。
 
 本机 OSS 发布凭据备忘：
@@ -142,17 +174,41 @@ ICP备案已通过，当前网站底部展示的备案号为 `鲁ICP备202603163
 - 当前 PATH 未检测到 `ossutil` 或 `ossutil64`；安装 ossutil 后，新开 PowerShell 再执行 `ossutil ls oss://aqztjx-site` 验证。
 - AccessKey ID、AccessKey Secret、下载的凭据文件不得写入仓库、文档、测试或提交信息。
 
+证书自动换新还需要给同一 RAM 用户追加最小权限：
+
+```json
+{
+  "Version": "1",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "yundun-cert:DescribePackageState",
+        "yundun-cert:CreateCertificateForPackageRequest",
+        "yundun-cert:DescribeCertificateState",
+        "yundun-cert:ListUserCertificateOrder",
+        "cdn:DescribeCdnDomainCertificateInfo",
+        "cdn:SetCdnDomainSSLCertificate"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
 百度搜索资源状态：
 
 - 2026-06-18 已上线 `sitemap.xml` 与 `robots.txt`。
 - 2026-06-18 已通过百度普通收录 API 成功提交 8 条正式 URL：首页、公司介绍、产品分类、三类设备详情、联系方式、常见问题。
-- 百度推送接口 token 不得写入仓库、文档、测试或提交信息；需要推送时由操作者临时提供。
+- HTTPS 上线后，在百度搜索资源平台新增并验证 `https://aqztjx.top`，后台 sitemap 填写 `https://aqztjx.top/sitemap.xml`。
+- 每次构建并发布成功后，可在 `app/` 目录先运行 `D:\soft\npm.cmd run submit:baidu:dry` 核对 HTTPS URL，再设置 `BAIDU_PUSH_TOKEN` 运行 `D:\soft\npm.cmd run submit:baidu`。
+- 百度推送接口 token 不得写入仓库、文档、测试或提交信息；脚本只从环境变量 `BAIDU_PUSH_TOKEN` 读取。
 
 Bing / IndexNow 分工合作：
 
 - DeepSeek 适合生成公司简介、产品说明、FAQ、外部平台简介等内容草稿。
 - Codex 负责把确认后的内容写入站点页面、结构化数据、sitemap 和提交脚本，并完成本地检查。
-- 操作者负责登录 Bing Webmaster Tools，添加并验证 `aqztjx.top`，提交 `http://aqztjx.top/sitemap.xml`。
+- 操作者负责登录 Bing Webmaster Tools，添加并验证 `aqztjx.top`，提交 `https://aqztjx.top/sitemap.xml`。
 - IndexNow 公开验证文件为 `app/public/b00aa3db8702439f8eab75fdb067f3c4.txt`，该文件会随构建发布到站点根目录。
 - 每次构建并发布成功后，可在 `app/` 目录先运行 `D:\soft\npm.cmd run submit:indexnow:dry` 检查提交内容，再运行 `D:\soft\npm.cmd run submit:indexnow` 通知 Bing。
 - Bing 账号、验证码、后台截图中的敏感信息不得写入仓库、文档、测试或提交信息。

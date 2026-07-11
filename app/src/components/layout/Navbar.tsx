@@ -35,11 +35,11 @@ const themeStyles: Record<
   },
   warm: {
     nav: 'border-forge-warm-text/25 bg-forge-orange/40 shadow-[0_10px_34px_hsl(18_76%_30%_/_0.16)] backdrop-blur-xl',
-    brand: 'text-forge-warm-text',
-    subBrand: 'text-forge-warm-text/65',
-    link: 'text-forge-warm-text/75 hover:text-forge-warm-text',
+    brand: 'text-forge-paper',
+    subBrand: 'text-forge-cream/80',
+    link: 'text-forge-paper hover:text-forge-cream',
     phone: 'border-forge-warm-text bg-forge-warm-text text-forge-paper hover:border-forge-paper hover:bg-forge-paper hover:text-forge-warm-text',
-    menu: 'text-forge-warm-text hover:text-forge-paper',
+    menu: 'text-forge-paper hover:text-forge-cream',
   },
 };
 
@@ -47,6 +47,9 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [navTheme, setNavTheme] = useState<NavTheme>(initialTheme);
   const navRef = useRef<HTMLElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useScrollLock(mobileOpen);
 
@@ -84,12 +87,72 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
     };
   }, []);
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 1024px)');
+    const closeOnDesktop = () => {
+      if (mediaQuery.matches) setMobileOpen(false);
+    };
+    mediaQuery.addEventListener('change', closeOnDesktop);
+    return () => mediaQuery.removeEventListener('change', closeOnDesktop);
+  }, []);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const menuButton = menuButtonRef.current;
+    const backgroundContent = [
+      navRef.current,
+      document.querySelector<HTMLElement>('.skip-link'),
+      document.querySelector<HTMLElement>('main'),
+      document.querySelector<HTMLElement>('footer'),
+    ].filter((element): element is HTMLElement => element !== null);
+    const addedInert = new Set<HTMLElement>();
+    backgroundContent.forEach((element) => {
+      if (!element.hasAttribute('inert')) {
+        element.setAttribute('inert', '');
+        addedInert.add(element);
+      }
+    });
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMobileOpen(false);
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const focusable = menuRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])',
+      );
+      if (!focusable || focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      addedInert.forEach((element) => element.removeAttribute('inert'));
+      const focusTarget = menuButton?.isConnected ? menuButton : previousFocus;
+      if (focusTarget?.isConnected) focusTarget.focus();
+    };
+  }, [mobileOpen]);
+
   const theme = themeStyles[navTheme];
 
   return (
     <>
       <nav
         ref={navRef}
+        aria-label="主导航"
         className={`fixed top-0 left-0 right-0 z-50 border-b transition-colors duration-300 ${theme.nav}`}
       >
         <div className="mx-auto flex h-14 max-w-[1440px] items-center justify-between px-4 sm:h-16 sm:px-5 md:h-[76px] lg:px-10">
@@ -135,6 +198,7 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
           {/* Mobile Toggle */}
           <button
             type="button"
+            ref={menuButtonRef}
             onClick={() => setMobileOpen(true)}
             className={`inline-flex h-11 w-11 items-center justify-center border border-current/25 transition-colors lg:hidden ${theme.menu}`}
             aria-label="打开菜单"
@@ -148,24 +212,30 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
 
       {/* Mobile Overlay Menu */}
       <div
+        ref={menuRef}
         id="mobile-menu"
         aria-hidden={!mobileOpen}
+        role="dialog"
+        aria-modal="true"
+        aria-label="移动端导航菜单"
+        inert={mobileOpen ? undefined : true}
         className={`fixed inset-0 z-[60] overflow-y-auto bg-forge-orange transition-transform duration-500 lg:hidden ${
           mobileOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
         }`}
       >
         <div className="flex min-h-dvh flex-col px-5 py-5">
           <div className="flex items-center justify-between">
-            <div className="text-forge-warm-text">
+            <div className="text-forge-paper">
               <p className="font-display text-xl font-black">安丘增涛机械</p>
-              <p className="mt-1 text-xs font-semibold tracking-[0.16em] text-forge-warm-text/70">
+              <p className="mt-1 text-xs font-semibold tracking-[0.16em] text-forge-cream/80">
                 设备咨询入口
               </p>
             </div>
             <button
               type="button"
+              ref={closeButtonRef}
               onClick={() => setMobileOpen(false)}
-              className="inline-flex h-11 w-11 items-center justify-center border border-forge-warm-text text-forge-warm-text transition-colors hover:border-forge-paper hover:text-forge-paper"
+              className="inline-flex h-11 w-11 items-center justify-center border border-forge-paper/30 text-forge-paper transition-colors hover:border-forge-paper hover:text-forge-cream"
               aria-label="关闭菜单"
               tabIndex={mobileOpen ? 0 : -1}
             >
@@ -179,7 +249,7 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
                 key={link.path}
                 href={link.path}
                 onClick={() => setMobileOpen(false)}
-                className="border-b border-forge-warm-text/24 py-4 font-display text-xl font-bold text-forge-warm-text transition-colors hover:text-forge-paper sm:text-2xl"
+                className="border-b border-forge-paper/30 py-4 font-display text-xl font-bold text-forge-paper transition-colors hover:text-forge-cream sm:text-2xl"
                 style={{ animationDelay: `${i * 80}ms` }}
                 tabIndex={mobileOpen ? 0 : -1}
               >
@@ -188,7 +258,7 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
             ))}
           </div>
 
-          <div className="grid gap-2 border-t border-forge-warm-text/30 pt-4 sm:gap-3 sm:pt-5">
+          <div className="grid gap-2 border-t border-forge-paper/30 pt-4 sm:gap-3 sm:pt-5">
             <a
               href={`tel:${siteInfo.phone}`}
               onClick={() => setMobileOpen(false)}
@@ -198,7 +268,7 @@ export function Navbar({ initialTheme = 'light' }: { initialTheme?: NavTheme }) 
               <Phone size={18} aria-hidden="true" />
               电话咨询 {siteInfo.phone}
             </a>
-            <div className="inline-flex min-h-12 items-center justify-center gap-2 border border-forge-warm-text px-4 text-sm font-semibold text-forge-warm-text">
+            <div className="inline-flex min-h-12 items-center justify-center gap-2 border border-forge-paper/30 px-4 text-sm font-semibold text-forge-paper">
               <MessageCircle size={18} aria-hidden="true" />
               微信 {siteInfo.wechat}
             </div>

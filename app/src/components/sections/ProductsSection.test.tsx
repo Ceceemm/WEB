@@ -31,6 +31,32 @@ describe('ProductsSection', () => {
     expect(within(panel).getByText('筛选机')).toBeInTheDocument();
   });
 
+  it('supports roving keyboard selection for category tabs', async () => {
+    const user = userEvent.setup();
+    render(<ProductsSection />);
+
+    const tabs = screen.getAllByRole('tab');
+    expect(tabs[0]).toHaveAccessibleName('榨油设备');
+    expect(tabs[0]).toHaveAttribute('tabindex', '0');
+    expect(tabs[1]).toHaveAttribute('tabindex', '-1');
+
+    tabs[0].focus();
+    await user.keyboard('{ArrowRight}');
+    expect(tabs[1]).toHaveFocus();
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+    await user.keyboard('{ArrowDown}');
+    expect(tabs[2]).toHaveFocus();
+    await user.keyboard('{ArrowLeft}');
+    expect(tabs[1]).toHaveFocus();
+    await user.keyboard('{ArrowUp}');
+    expect(tabs[0]).toHaveFocus();
+    await user.keyboard('{End}');
+    expect(tabs[2]).toHaveFocus();
+    await user.keyboard('{Home}');
+    expect(tabs[0]).toHaveFocus();
+    expect(tabs.filter((tab) => tab.tabIndex === 0)).toHaveLength(1);
+  });
+
   it('hides gallery-only items from product category panels', async () => {
     const user = userEvent.setup();
 

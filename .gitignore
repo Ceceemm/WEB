@@ -26,6 +26,9 @@ app/.env.*
 
 # Local filing/domain evidence files at repo root
 /*.jpg
+/*.png
+/*.txt
+/*.lnk
 
 # Editor and OS files
 .DS_Store

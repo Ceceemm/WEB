@@ -40,7 +40,7 @@ export function AdvantagesSection() {
               为什么选择我们
             </h2>
           </ScrollReveal>
-          <ScrollReveal delay={100}>
+          <ScrollReveal>
             <p className="max-w-2xl text-forge-warm-muted leading-8">
               采购机械设备更看重稳定、匹配和后续沟通。优势不做空泛口号，直接对应客户会问的四件事。
             </p>
@@ -48,8 +48,8 @@ export function AdvantagesSection() {
         </div>
 
         <div className="grid grid-cols-1 gap-px border border-forge-warm-border bg-forge-warm-border sm:grid-cols-2 lg:grid-cols-4">
-          {advantages.map((item, index) => (
-            <ScrollReveal key={item.title} delay={index * 100}>
+          {advantages.map((item) => (
+            <ScrollReveal key={item.title}>
               <div className="group relative min-h-[200px] bg-forge-surface p-6 transition-colors duration-300 hover:bg-forge-warm-text md:min-h-[250px] md:p-7">
                 <div className="flex h-full flex-col justify-between gap-10">
                   <div className="flex h-12 w-12 items-center justify-center border border-forge-warm-border group-hover:border-forge-orange">

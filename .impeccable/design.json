@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-10T00:00:00.000Z",
+  "title": "Design System: 安丘增涛机械官网",
+  "extensions": {
+    "colorMeta": {
+      "forge-orange": {
+        "role": "primary",
+        "displayName": "炉火深橙",
+        "canonical": "hsl(18 70% 38%)",
+        "tonalRamp": ["#32170d", "#5b2811", "#7a3517", "#a5431d", "#c95c2e", "#df8c67", "#f1c4ad", "#fbeae2"]
+      }
+    },
+    "motion": [
+      {"name": "state", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "短状态反馈，减少动态偏好时禁用。"}
+    ],
+    "breakpoints": [
+      {"name": "sm", "value": "640px"},
+      {"name": "lg", "value": "1024px"}
+    ]
+  },
+  "components": [],
+  "narrative": {
+    "northStar": "工厂现场的设备目录",
+    "overview": "真实设备、工况和咨询路径构成页面核心。工业感来自结构、排版和暖锻造材料色。",
+    "keyCharacteristics": ["真实设备图优先", "目录式层级", "克制动态"],
+    "rules": [{"name": "Contrast Rule", "body": "普通文字必须达到 WCAG AA。", "section": "colors"}],
+    "dos": ["Do 使用真实设备实拍和选型要点。"],
+    "donts": ["Don't 使用英雄指标模板、渐变文字或玻璃拟态。"]
+  }
+}

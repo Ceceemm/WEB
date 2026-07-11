@@ -18,15 +18,21 @@ function outputPathFor(routePath) {
   return path.join(distDir, routePath.replace(/^\//, ''));
 }
 
-for (const route of pageRoutes) {
-  const { appHtml, headHtml } = render(route.path);
+async function writePage(routePath) {
+  const { appHtml, headHtml } = render(routePath);
   const html = template
     .replace(/<!--app-head-start-->[\s\S]*?<!--app-head-end-->/, `<!--app-head-start-->\n    ${headHtml}\n    <!--app-head-end-->`)
     .replace('<!--app-html-->', appHtml);
-  const outPath = outputPathFor(route.path);
+  const outPath = outputPathFor(routePath);
 
   await mkdir(path.dirname(outPath), { recursive: true });
   await writeFile(outPath, html, 'utf8');
 }
+
+for (const route of pageRoutes) {
+  await writePage(route.path);
+}
+
+await writePage('/404.html');
 
 await writeFile(path.join(distDir, 'sitemap.xml'), getSitemapXml(), 'utf8');
